@@ -2,7 +2,7 @@
  * @typedef {{ r: number, g: number, b: number }} PaletteColor
  */
 
-const MIN_PIXEL_RATIO = 0.05;
+const MIN_PIXEL_RATIO = 0.33;
 
 /**
  * @param {number} r
@@ -86,12 +86,25 @@ function filterByRatio(counts, rate) {
 		return new Map();
 	}
 
-    // uses reduce for performance
-    const maxCount = [...counts.values()].reduce(
-        (max, count) => Math.max(max, count),
-        0
-    );
-    const threshold = Math.floor(maxCount * rate);
+	/* 
+		When the border color is the same as the palette color, 
+		the top count will greatly exceed the normal palette color count, so the filter overshoots.
+		Thus, (if there's more than one color) the second max count is used to determine the threshold.
+	*/
+	const top2Counts = [...counts.values()].reduce(
+		(top2, count) => {
+			if (count > top2[0]) {
+				top2[1] = top2[0];
+				top2[0] = count;
+			} else if (count > top2[1]) {
+				top2[1] = count;
+			}
+			return top2;
+		},
+		{ 0: 0, 1: 0 }
+	);
+	const normalPaletteColorCount = (top2Counts[1] === 0) ? top2Counts[0] : top2Counts[1];
+	const threshold = Math.floor(normalPaletteColorCount * rate);
 
 	for (const [key, count] of counts.entries()) {
 		if (count < threshold) {
