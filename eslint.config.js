@@ -8,16 +8,16 @@ import eslintConfigPrettier from "eslint-config-prettier/flat";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const compat = new FlatCompat({
-    baseDirectory: __dirname,
-    recommendedConfig: js.configs.recommended,
-    allConfig: js.configs.all,
+	baseDirectory: __dirname,
+	recommendedConfig: js.configs.recommended,
+	allConfig: js.configs.all,
 });
 
 export default defineConfig([
-    eslintConfigPrettier,
-    {
-        rules: {
-            semi: ["warn", "always"],
-        },
-    },
+	eslintConfigPrettier,
+	{
+		rules: {
+			semi: ["warn", "always"],
+		},
+	},
 ]);
