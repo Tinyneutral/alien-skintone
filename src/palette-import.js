@@ -91,7 +91,7 @@ function filterByRatio(counts, rate) {
 		the top count will greatly exceed the normal palette color count, so the filter overshoots.
 		Thus, (if there's more than one color) the second max count is used to determine the threshold.
 	*/
-	const top2Counts = [...counts.values()].reduce(
+	const top2 = [...counts.values()].reduce(
 		(top2, count) => {
 			if (count > top2[0]) {
 				top2[1] = top2[0];
@@ -103,7 +103,7 @@ function filterByRatio(counts, rate) {
 		},
 		{ 0: 0, 1: 0 }
 	);
-	const normalPaletteColorCount = (top2Counts[1] === 0) ? top2Counts[0] : top2Counts[1];
+	const normalPaletteColorCount = (top2[1] === 0) ? top2[0] : top2[1];
 	const threshold = Math.floor(normalPaletteColorCount * rate);
 
 	for (const [key, count] of counts.entries()) {
