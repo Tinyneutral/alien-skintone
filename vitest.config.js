@@ -9,6 +9,11 @@ export default defineConfig({
 			// https://vitest.dev/config/browser/playwright
 			instances: [{ browser: "chromium" }],
 			include: ["src/tests/**/*.test.js"],
+			exclude: [
+				'**/node_modules/**',
+				'**/dist/**',
+				'./temp/**',
+			],
 			headless: true,
 		},
 	},
