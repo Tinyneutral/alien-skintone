@@ -5,7 +5,7 @@
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<title>alien-skintone</title>
-		<link rel="stylesheet" href="/src/style.css" />
+		<link rel="stylesheet" href="/src/styles.css" />
 	</head>
 	<body>
 		<header>
@@ -16,10 +16,37 @@
 				<div class="grid">
 					<!-- auto generate grid items -->
 				</div>
-				<input type="file" accept="image/*" />
+				<label>
+					Choose palette image
+					<input type="file" accept="image/*" />
+				</label>
+			</section>
+
+			<section class="eyedropper">
+				<label>
+					Choose eyedropper image
+					<input type="file" accept="image/*" />
+				</label>
+				<div class="range">
+					<img
+						class="target"
+						alt="Eyedropper preview"
+						draggable="false"
+						hidden />
+					<div class="magnifier" aria-hidden="true" hidden></div>
+				</div>
+
+				<p class="hint">
+					Upload an image, then press and hold it to pick a color.
+				</p>
+
+				<div class="picked-color" aria-live="polite" hidden>
+					<div class="swatch" aria-hidden="true"></div>
+					<p class="label">Picked color</p>
+					<p class="hex">—</p>
+				</div>
 			</section>
 		</main>
-
 		<script type="module" src="/src/main.js"></script>
 	</body>
 </html>
