@@ -139,7 +139,7 @@ header h1 {
 	right: 0.5rem;
 	width: 7rem;
 	height: 7rem;
-	border: 2px solid #5b4fff;
+	outline: 2px solid #5b4fff;
 	border-radius: 0.5rem;
 	background-color: #fff;
 	background-repeat: no-repeat;
