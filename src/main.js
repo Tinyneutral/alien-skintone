@@ -1,5 +1,6 @@
 import { extractPalette } from "./palette-import.js";
 import { pickColorFromCanvas, cropOutBg } from "./eyedropper.js";
+import { rankPaletteByColor } from "./closest.js";
 
 const paletteGrid = document.querySelector(".palette .grid");
 const paletteFileInput = document.querySelector('.palette input[type="file"]');
@@ -34,6 +35,35 @@ function rgbToHex(color) {
 }
 
 /**
+ * Parse a CSS color string (#hex or rgb/rgba) into { r, g, b }.
+ * Browsers return inline style.backgroundColor as rgb(), not #hex.
+ *
+ * @param {string} css
+ * @returns {{ r: number, g: number, b: number }}
+ */
+function cssColorToRgb(css) {
+	const hex = css.match(/^#([0-9a-fA-F]{6})$/);
+	if (hex) {
+		return {
+			r: parseInt(hex[1].slice(0, 2), 16),
+			g: parseInt(hex[1].slice(2, 4), 16),
+			b: parseInt(hex[1].slice(4, 6), 16),
+		};
+	}
+
+	const rgb = css.match(/^rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)/);
+	if (rgb) {
+		return {
+			r: Number(rgb[1]),
+			g: Number(rgb[2]),
+			b: Number(rgb[3]),
+		};
+	}
+
+	throw new Error(`Invalid CSS color string: ${css}`);
+}
+
+/**
  * @param {number} val
  * @param {number} min
  * @param {number} max
@@ -55,14 +85,36 @@ function renderPaletteGrid(palette) {
 
 		const rank = document.createElement("p");
 		rank.className = "rank";
-		rank.textContent = "#1";
+		rank.textContent = "—";
 
 		const button = document.createElement("button");
+		button.className = "swatch";
 		button.type = "button";
 		button.style.backgroundColor = rgbToCss(color);
 
 		item.append(rank, button);
 		paletteGrid.append(item);
+	}
+}
+
+/**
+ * @param {{ r: number, g: number, b: number }} color
+ */
+function updatePaletteRanks(color) {
+	const items = Array.from(paletteGrid.querySelectorAll(".item"));
+	if (items.length === 0) {
+		return;
+	}
+
+	const palette = items.map((item) => {
+		const swatch = item.querySelector(".swatch");
+		return cssColorToRgb(swatch.style.backgroundColor);
+	});
+	const ranks = rankPaletteByColor(palette, color);
+
+	for (const [i, item] of items.entries()) {
+		const rankEl = item.querySelector(".rank");
+		rankEl.textContent = `${ranks[i]}`;
 	}
 }
 
@@ -204,6 +256,7 @@ eyedropperTarget.addEventListener("pointerup", async (event) => {
 			Math.floor(crop.height / 2)
 		);
 		renderPickedColor(color);
+		updatePaletteRanks(color);
 	} catch {
 		// Skip color pick if background crop fails
 	}
