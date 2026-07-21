@@ -1,5 +1,5 @@
 import { extractPalette } from "./palette-import.js";
-import { pickColorFromImage } from "./eyedropper.js";
+import { pickColorFromCanvas, cropOutBg } from "./eyedropper.js";
 
 const paletteGrid = document.querySelector(".palette .grid");
 const paletteFileInput = document.querySelector('.palette input[type="file"]');
@@ -171,32 +171,6 @@ function magnifierIsInTheWay(event) {
 	);
 }
 
-/**
- * Fit the cursor to the image DPI
- * @param {HTMLImageElement} img
- * @param {number} clientX
- * @param {number} clientY
- * @returns {{ x: number, y: number }}
- */
-function fitToImageDpi(img, clientX, clientY) {
-	const rect = img.getBoundingClientRect();
-	const scaleX = img.naturalWidth / rect.width;
-	const scaleY = img.naturalHeight / rect.height;
-	const rawX = (clientX - rect.left) * scaleX;
-	const rawY = (clientY - rect.top) * scaleY;
-	const x = clamp(
-		Math.floor(rawX),
-		0,
-		img.naturalWidth - 1
-	);
-	const y = clamp(
-		Math.floor(rawY),
-		0,
-		img.naturalHeight - 1
-	);
-	return { x, y };
-}
-
 eyedropperTarget.addEventListener("pointerdown", (event) => {
 	event.preventDefault();
 	eyedropperTarget.setPointerCapture(event.pointerId);
@@ -219,17 +193,22 @@ eyedropperTarget.addEventListener("pointermove", (event) => {
 	}
 });
 
-eyedropperTarget.addEventListener("pointerup", (event) => {
+eyedropperTarget.addEventListener("pointerup", async (event) => {
 	eyedropperTarget.releasePointerCapture(event.pointerId);
-	eyedropperMagnifier.hidden = true;
 
-	const { x, y } = fitToImageDpi(
-		eyedropperTarget,
-		event.clientX,
-		event.clientY
-	);
-	const color = pickColorFromImage(eyedropperTarget, x, y);
-	renderPickedColor(color);
+	try {
+		const crop = await cropOutBg(eyedropperMagnifier);
+		const color = pickColorFromCanvas(
+			crop,
+			Math.floor(crop.width / 2),
+			Math.floor(crop.height / 2)
+		);
+		renderPickedColor(color);
+	} catch {
+		// Skip color pick if background crop fails
+	}
+
+	eyedropperMagnifier.hidden = true;
 });
 
 eyedropperTarget.addEventListener("pointercancel", (event) => {
