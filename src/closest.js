@@ -1,28 +1,37 @@
-import { diff, rgbaToLab } from "color-diff";
+import Color from "colorjs.io";
 
 /**
- * @param {{ r: number, g: number, b: number }} a
- * @param {{ r: number, g: number, b: number }} b
- * @returns {number}
+ * Convert to space and multiply each coord by its strength.
+ * @param {{ r: number, g: number, b: number }} rgb
+ * @param {string} space
+ * @param {number[]} strengths
+ * @returns {Color}
  */
-function labDiff(a, b) {
-	// needed to fit color-diff API
-	const properA = { R: a.r, G: a.g, B: a.b };
-	const properB = { R: b.r, G: b.g, B: b.b };
-	return diff(rgbaToLab(properA), rgbaToLab(properB));
+function toWeightedColor(rgb, space, strengths) {
+	const color = new Color("srgb", [rgb.r / 255, rgb.g / 255, rgb.b / 255])
+		.to(space);
+	color.coords.forEach((value, index) => {
+		const strength = strengths[index] ?? 0;
+		color.coords[index] = value * strength;
+	});
+	return color;
 }
 
 /**
  * @param {{ r: number, g: number, b: number }[]} palette
- * @param {{ r: number, g: number, b: number }} targetColor
- * @returns {number[]}
+ * @param {{ r: number, g: number, b: number }} target
+ * @param {string} space
+ * @param {number[]} strengths
+ * @returns {number[]} sorted ascending by distance
  */
-export function rankPaletteByColor(palette, targetColor) {
-	const rankMap = palette
+export function rankPaletteByColor(palette, target, space, strengths) {
+	const cPalette = palette.map((rgb) => toWeightedColor(rgb, space, strengths));
+	const cTarget = toWeightedColor(target, space, strengths);
+	const rankMap = cPalette
 		.map((color, index) => ({ color, index, rank: 0 }))
 		.sort(
 			(a, b) =>
-				labDiff(a.color, targetColor) - labDiff(b.color, targetColor)
+				a.color.distance(cTarget) - b.color.distance(cTarget)
 		)
 		.map((entry, index) => ({ ...entry, rank: index + 1 }))
 		.sort((a, b) => a.index - b.index);

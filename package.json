@@ -29,6 +29,6 @@
 		"fsevents@2.3.2": true
 	},
 	"dependencies": {
-		"color-diff": "^1.4.0"
+		"colorjs.io": "^0.7.0"
 	}
 }

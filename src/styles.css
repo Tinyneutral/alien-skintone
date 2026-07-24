@@ -212,3 +212,91 @@ header h1 {
 		ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 	color: #1a1a1a;
 }
+
+.compare-config {
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+	margin-top: 2.5rem;
+	padding-top: 2.5rem;
+	border-top: 1px solid #dddde4;
+}
+
+.compare-config > label,
+.compare-config .default > label,
+.compare-config .advanced > label {
+	display: block;
+	font-size: 0.875rem;
+	font-weight: 600;
+	color: #3a3a44;
+}
+
+.compare-config select,
+.compare-config input[type="range"] {
+	display: block;
+	width: 100%;
+	min-height: 2.75rem;
+	margin-top: 0.375rem;
+	font-size: 0.9375rem;
+}
+
+.compare-config select.mode {
+	margin-top: 0;
+}
+
+.compare-config input[type="range"] {
+	min-height: 1.5rem;
+	padding: 0;
+}
+
+.compare-config .hint {
+	margin: 0.5rem 0 0;
+	color: #5a5a66;
+	font-size: 0.9375rem;
+	font-weight: 400;
+}
+
+.compare-config .default[hidden],
+.compare-config .advanced[hidden],
+.compare-config .coord-row[hidden] {
+	display: none;
+}
+
+.compare-config .coord-row {
+	display: grid;
+	grid-template-columns: 1fr auto;
+	gap: 0.75rem;
+	align-items: center;
+	margin-top: 0.75rem;
+	padding: 0.75rem;
+	border: 1px solid #c8c8d0;
+	border-radius: 0.5rem;
+	background-color: #fff;
+	font-weight: 400;
+}
+
+.compare-config .coord-row label {
+	display: flex;
+	align-items: center;
+	gap: 0.375rem;
+	min-height: 2.75rem;
+	margin: 0;
+	font-size: 0.875rem;
+	font-weight: 400;
+	white-space: nowrap;
+}
+
+.compare-config .coord-row input[type="checkbox"] {
+	width: 1.25rem;
+	height: 1.25rem;
+}
+
+.compare-config .coord-row::before {
+	content: attr(data-coord);
+	grid-column: 1 / -1;
+	font-family:
+		ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+	font-size: 0.875rem;
+	font-weight: 600;
+	color: #3a3a44;
+}
