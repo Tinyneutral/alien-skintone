@@ -46,6 +46,49 @@
 					<p class="hex">—</p>
 				</div>
 			</section>
+
+			<section class="compare-config">
+				<select class="mode">
+					<option value="default">default</option>
+					<option value="advanced">advanced</option>
+				</select>
+
+				<div class="default">
+					<label>Preset
+						<select></select>
+					</label>
+					<p class="hint"></p>
+				</div>
+
+				<div class="advanced" hidden>
+					<label>Color space
+						<select class="space"></select>
+					</label>
+					<label>Coord strengths
+						<div class="coord-row" id="coord-1">
+							<input type="range" min="0" max="1" step="0.01" value="0" />
+							<label>
+								<input type="checkbox" />
+								disable
+							</label>
+						</div>
+						<div class="coord-row" id="coord-2">
+							<input type="range" min="0" max="1" step="0.01" value="0" />
+							<label>
+								<input type="checkbox" />
+								disable
+							</label>
+						</div>
+						<div class="coord-row" id="coord-3">
+							<input type="range" min="0" max="1" step="0.01" value="0" />
+							<label>
+								<input type="checkbox" />
+								disable
+							</label>
+						</div>
+					</label>
+				</div>
+			</section>
 		</main>
 		<script type="module" src="/src/main.js"></script>
 	</body>

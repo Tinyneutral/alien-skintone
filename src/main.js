@@ -1,6 +1,17 @@
+import Color from "colorjs.io";
 import { extractPalette } from "./palette-import.js";
 import { pickColorFromCanvas, cropOutBg } from "./eyedropper.js";
 import { rankPaletteByColor } from "./closest.js";
+import {
+	DEFAULT_PRESETS,
+	getAdvancedSpace,
+	getCoordStrengths,
+	getSpaces,
+	setAdvancedSpace,
+	setCoordEnabled,
+	setCoordStrength,
+	setMode,
+} from "./feature-select.js";
 
 const paletteGrid = document.querySelector(".palette .grid");
 const paletteFileInput = document.querySelector('.palette input[type="file"]');
@@ -15,6 +26,22 @@ const pickedSwatch = document.querySelector(
 	".eyedropper .picked-color .swatch"
 );
 const pickedHex = document.querySelector(".eyedropper .picked-color .hex");
+
+const compareConfig = document.querySelector(".compare-config");
+const compareModeSelect = document.querySelector("select.mode");
+const defaultPanel = document.querySelector(".compare-config .default");
+const advancedPanel = document.querySelector(".compare-config .advanced");
+const presetSelect = document.querySelector(".compare-config .default select");
+const presetDescription = document.querySelector(".compare-config .default.hint");
+const spaceSelect = document.querySelector(".compare-config .advanced select.space");
+const coordRows = [
+	document.querySelector("#coord-1"),
+	document.querySelector("#coord-2"),
+	document.querySelector("#coord-3"),
+];
+
+/** @type {{ r: number, g: number, b: number } | null} */
+let currentPickedColor = null;
 
 /**
  * @param {{ r: number, g: number, b: number }} color
@@ -36,7 +63,6 @@ function rgbToHex(color) {
 
 /**
  * Parse a CSS color string (#hex or rgb/rgba) into { r, g, b }.
- * Browsers return inline style.backgroundColor as rgb(), not #hex.
  *
  * @param {string} css
  * @returns {{ r: number, g: number, b: number }}
@@ -97,12 +123,10 @@ function renderPaletteGrid(palette) {
 	}
 }
 
-/**
- * @param {{ r: number, g: number, b: number }} color
- */
-function updatePaletteRanks(color) {
+
+function updatePaletteRanks() {
 	const items = Array.from(paletteGrid.querySelectorAll(".item"));
-	if (items.length === 0) {
+	if (items.length === 0 || !currentPickedColor) {
 		return;
 	}
 
@@ -110,12 +134,142 @@ function updatePaletteRanks(color) {
 		const swatch = item.querySelector(".swatch");
 		return cssColorToRgb(swatch.style.backgroundColor);
 	});
-	const ranks = rankPaletteByColor(palette, color);
+	const ranks = rankPaletteByColor(
+		palette,
+		currentPickedColor,
+		getAdvancedSpace(),
+		getCoordStrengths()
+	);
 
 	for (const [i, item] of items.entries()) {
 		const rankEl = item.querySelector(".rank");
 		rankEl.textContent = `${ranks[i]}`;
 	}
+}
+
+function syncModePanels() {
+	const mode = compareModeSelect.value;
+	defaultPanel.hidden = mode !== "default";
+	advancedPanel.hidden = mode !== "advanced";
+}
+
+function populatePresetSelect() {
+	presetSelect.replaceChildren();
+	const sections = [...new Set(DEFAULT_PRESETS.map((p) => p.section))];
+
+	for (const section of sections) {
+		const group = document.createElement("optgroup");
+		group.label = section;
+
+		for (const preset of DEFAULT_PRESETS.filter(
+			(entry) => entry.section === section
+		)) {
+			const option = document.createElement("option");
+			option.value = preset.id;
+			option.textContent = `${preset.name} [${preset.id}]`;
+			group.append(option);
+		}
+
+		presetSelect.append(group);
+	}
+}
+
+function populateSpaceSelect() {
+	spaceSelect.replaceChildren();
+	for (const spaceId of getSpaces()) {
+		const option = document.createElement("option");
+		option.value = spaceId;
+		option.textContent = spaceId;
+		spaceSelect.append(option);
+	}
+}
+
+function applyFirstPreset() {
+	const space = "srgb";
+	spaceSelect.value = space;
+	setAdvancedSpace(space);
+	syncCoordRows();
+
+	const first = DEFAULT_PRESETS[0];
+	presetSelect.value = first.id;
+	presetDescription.textContent = first.description;
+	setPreset(first.id);
+}
+
+/**
+ * @param {string} spaceId
+ * @returns {string[]}
+ */
+function getCoordIds(spaceId) {
+	const space = Color.spaces[spaceId];
+	if (!space?.coords) {
+		return [];
+	}
+	return Object.keys(space.coords);
+}
+
+function syncCoordRows() {
+	const spaceId = getAdvancedSpace();
+	const coords = getCoordIds(spaceId);
+	const strengths = getCoordStrengths();
+
+	for (const [index, row] of coordRows.entries()) {
+		const slider = row.querySelector('input[type="range"]');
+		const disable = row.querySelector('input[type="checkbox"]');
+		const exists = index < coords.length;
+
+		row.hidden = !exists;
+		if (!exists) {
+			continue;
+		}
+
+		const strength = strengths[index] ?? 0;
+		slider.value = String(strength);
+		slider.disabled = strength === 0;
+		disable.checked = strength === 0;
+		row.dataset.coord = coords[index];
+	}
+}
+
+function initCompareUi() {
+	populatePresetSelect();
+	populateSpaceSelect();
+	applyFirstDefaultPreset();
+	syncCoordRows();
+	syncModePanels();
+}
+
+compareModeSelect.addEventListener("change", () => {
+	setMode((compareModeSelect.value));
+	syncModePanels();
+	updatePaletteRanks();
+});
+
+presetSelect.addEventListener("change", () => {
+	applyPreset(presetSelect.value);
+	updatePaletteRanks();
+});
+
+spaceSelect.addEventListener("change", () => {
+	setAdvancedSpace(spaceSelect.value);
+	syncCoordRows();
+	updatePaletteRanks();
+});
+
+for (const [index, row] of coordRows.entries()) {
+	const slider = row.querySelector('input[type="range"]');
+	const disable = row.querySelector('input[type="checkbox"]');
+
+	slider.addEventListener("input", () => {
+		setCoordStrength(index, Number(slider.value));
+		updatePaletteRanks();
+	});
+
+	disable.addEventListener("change", () => {
+		setCoordStrength(index, slider.value * !disable.checked);
+		slider.disabled = disable.checked;
+		updatePaletteRanks();
+	});
 }
 
 paletteFileInput.addEventListener("change", async () => {
@@ -127,12 +281,13 @@ paletteFileInput.addEventListener("change", async () => {
 	try {
 		const palette = await extractPalette(file);
 		renderPaletteGrid(palette);
+		updatePaletteRanks();
 	} catch {
 		paletteGrid.replaceChildren();
 	}
 });
 
-eyedropperFileInput.addEventListener("change", async (event) => {
+eyedropperFileInput.addEventListener("change", async () => {
 	const file = eyedropperFileInput.files?.[0];
 	if (!file) {
 		return;
@@ -167,8 +322,6 @@ const MAGNIFIER_ZOOM = 6;
  */
 function updateMagnifier(event) {
 	const baseRect = eyedropperTarget.getBoundingClientRect();
-	const scaleX = eyedropperTarget.naturalWidth / baseRect.width;
-	const scaleY = eyedropperTarget.naturalHeight / baseRect.height;
 
 	const x = clamp(
 		Math.floor(event.clientX - baseRect.left),
@@ -255,8 +408,9 @@ eyedropperTarget.addEventListener("pointerup", async (event) => {
 			Math.floor(crop.width / 2),
 			Math.floor(crop.height / 2)
 		);
+		currentPickedColor = color;
 		renderPickedColor(color);
-		updatePaletteRanks(color);
+		updatePaletteRanks();
 	} catch {
 		// Skip color pick if background crop fails
 	}
@@ -272,3 +426,5 @@ eyedropperTarget.addEventListener("pointercancel", (event) => {
 eyedropperTarget.addEventListener("contextmenu", (event) => {
 	event.preventDefault();
 });
+
+initCompareUi();
