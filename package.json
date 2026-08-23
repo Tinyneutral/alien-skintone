@@ -1,34 +1,43 @@
 {
 	"name": "alien-skintone",
-	"version": "0.0.0",
 	"private": true,
+	"version": "0.0.0",
 	"type": "module",
-	"author": "Tinyneutral",
 	"scripts": {
 		"dev": "vite",
 		"build": "vite build",
+		"lint": "eslint .",
 		"preview": "vite preview",
-		"lint": "eslint src/ --report-unused-disable-directives --max-warnings 0",
-		"lint:fix": "eslint src/ --fix",
 		"format": "prettier --write .",
 		"test": "vitest",
-		"test:browser": "vitest"
-	},
-	"devDependencies": {
-		"@eslint/eslintrc": "^3.3.5",
-		"@eslint/js": "^10.0.1",
-		"@vitest/browser-playwright": "^4.1.10",
-		"@vitest/browser-preview": "^4.1.10",
-		"eslint": "^10.6.0",
-		"eslint-config-prettier": "^10.1.8",
-		"prettier": "^3.9.5",
-		"vite": "^8.1.1",
-		"vitest": "^4.1.10"
-	},
-	"allowScripts": {
-		"fsevents@2.3.2": true
+		"test:browser": "vitest --config=vitest.browser.config.js"
 	},
 	"dependencies": {
-		"colorjs.io": "^0.7.0"
+		"colorjs.io": "^0.7.1",
+		"react": "^19.2.8",
+		"react-dom": "^19.2.8"
+	},
+	"devDependencies": {
+		"@babel/core": "^7.29.7",
+		"@eslint/js": "^10.0.1",
+		"@rolldown/plugin-babel": "^0.2.3",
+		"@types/react": "^19.2.17",
+		"@types/react-dom": "^19.2.3",
+		"@vitejs/plugin-react": "^6.0.4",
+		"@vitest/browser-playwright": "^4.1.11",
+		"babel-plugin-react-compiler": "^1.0.0",
+		"eslint": "^10.8.0",
+		"eslint-config-prettier": "^10.1.8",
+		"eslint-plugin-react-hooks": "^7.1.1",
+		"eslint-plugin-react-refresh": "^0.5.3",
+		"globals": "^17.7.0",
+		"prettier": "3.9.6",
+		"vite": "^8.2.0",
+		"vitest": "^4.1.11",
+		"vitest-browser-react": "^2.2.0"
+	},
+	"allowScripts": {
+		"fsevents@2.3.3": true,
+		"fsevents@2.3.2": true
 	}
 }

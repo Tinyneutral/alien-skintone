@@ -5,91 +5,9 @@
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<title>alien-skintone</title>
-		<link rel="stylesheet" href="/src/styles.css" />
 	</head>
 	<body>
-		<header>
-			<h1>alien-skintone</h1>
-		</header>
-		<main class="app">
-			<section class="palette">
-				<div class="grid">
-					<!-- auto generate grid items -->
-				</div>
-				<label>
-					Choose palette image
-					<input type="file" accept="image/*" />
-				</label>
-			</section>
-
-			<section class="eyedropper">
-				<label>
-					Choose eyedropper image
-					<input type="file" accept="image/*" />
-				</label>
-				<div class="range">
-					<img
-						class="target"
-						alt="Eyedropper preview"
-						draggable="false"
-						hidden />
-					<div class="magnifier" aria-hidden="true" hidden></div>
-				</div>
-
-				<p class="hint">
-					Upload an image, then press and hold it to pick a color.
-				</p>
-
-				<div class="picked-color" aria-live="polite" hidden>
-					<div class="swatch" aria-hidden="true"></div>
-					<p class="label">Picked color</p>
-					<p class="hex">—</p>
-				</div>
-			</section>
-
-			<section class="compare-config">
-				<select class="mode">
-					<option value="default">default</option>
-					<option value="advanced">advanced</option>
-				</select>
-
-				<div class="default">
-					<label>Preset
-						<select></select>
-					</label>
-					<p class="hint"></p>
-				</div>
-
-				<div class="advanced" hidden>
-					<label>Color space
-						<select class="space"></select>
-					</label>
-					<label>Coord strengths
-						<div class="coord-row" id="coord-1">
-							<input type="range" min="0" max="1" step="0.01" value="0" />
-							<label>
-								<input type="checkbox" />
-								disable
-							</label>
-						</div>
-						<div class="coord-row" id="coord-2">
-							<input type="range" min="0" max="1" step="0.01" value="0" />
-							<label>
-								<input type="checkbox" />
-								disable
-							</label>
-						</div>
-						<div class="coord-row" id="coord-3">
-							<input type="range" min="0" max="1" step="0.01" value="0" />
-							<label>
-								<input type="checkbox" />
-								disable
-							</label>
-						</div>
-					</label>
-				</div>
-			</section>
-		</main>
-		<script type="module" src="/src/main.js"></script>
+		<div id="root"></div>
+		<script type="module" src="/src/main.jsx"></script>
 	</body>
 </html>
