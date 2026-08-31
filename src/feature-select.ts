@@ -1,17 +1,17 @@
 import Color from "colorjs.io";
+import ColorSpace from "colorjs.io/spaces";
 
-function clamp(val, min, max) {
+function clamp(val: number, min: number, max: number) {
 	return Math.max(min, Math.min(max, val));
 }
 
 /**
- * @typedef {{ r: number, g: number, b: number }} Rgb
  * @typedef {{
  *   id: string,
  *   name: string,
  *   section: string,
  *   description: string,
- *   space: string,
+ *   space: ColorSpace,
  *   strengths: number[]
  * }} Preset
  */
@@ -75,46 +75,45 @@ export const DEFAULT_PRESETS = [
 /** @type {"default" | "advanced"} */
 let mode = "default";
 
-/** @type {string} */
-let space = "oklab";
+/** @type {ColorSpace} */
+let space = Color.spaces["oklab"] as ColorSpace;
 
 /** @type {number[]} */
-let coordStrengths = [1, 1, 1];
+const coordStrengths = [1, 1, 1];
 
 /**
  * @param {string} id
- * @returns {{ space: string, strengths: number[] }}
+ * @returns {{ space: ColorSpace, strengths: number[] }}
  */
-function decodeId(id) {
+function decodeId(id: string) {
 	const [sSpace, sStrength] = id.split("-");
-	const space = Color.spaces[sSpace];
-	const strength = sStrength.split("").map(Boolean);
-	return { space, strength };
+	const space = Color.spaces[sSpace] as ColorSpace;
+	const strengths = sStrength.split("").map(Number);
+	return { space, strengths };
 }
 
 /**
- * @param {string} space
+ * @param {ColorSpace} space
  * @param {number[]} strengths
  * @returns {string}
  */
-function encodeId(space, strengths) {
-	return `${space}-${strengths.map(Boolean).join("")}`;
+function encodeId(space: ColorSpace, strengths: number[]) {
+	return `${space.name}-${strengths.map(Boolean).join("")}`;
 }
 
 /**
- * @param {string} spaceId
+ * @param {ColorSpace} space
  * @param {number} index
  * @returns {boolean}
  */
-function coordExists(spaceId, index) {
-	const space = Color.spaces[spaceId];
+function coordExists(space: ColorSpace, index: number) {
 	return index < Object.keys(space.coords).length;
 }
 
 /**
  * @param {"default" | "advanced"} next
  */
-export function setMode(next) {
+export function setMode(next: "default" | "advanced") {
 	if (next !== "default" && next !== "advanced") {
 		throw new TypeError('Mode must be "default" or "advanced"');
 	}
@@ -124,13 +123,13 @@ export function setMode(next) {
 /**
  * @param {string} id
  */
-export function setPreset(id) {
+export function setPreset(id: string) {
 	const preset = DEFAULT_PRESETS.find((entry) => entry.id === id);
 	if (!preset) {
 		throw new Error(`Unknown preset: ${id}`);
 	}
 	const { space, strengths } = decodeId(id);
-	setAdvancedSpace(space);
+	setAdvancedSpace(space.name);
 	for (let i = 0; i < strengths.length; i++) {
 		setCoordStrength(i, strengths[i]);
 	}
@@ -139,18 +138,18 @@ export function setPreset(id) {
 /**
  * @param {string} spaceId
  */
-export function setAdvancedSpace(spaceId) {
+export function setAdvancedSpace(spaceId: string) {
 	if (!Color.spaces[spaceId]) {
 		throw new Error(`Unknown color space: ${spaceId}`);
 	}
-	space = spaceId;
+	space = Color.spaces[spaceId] as ColorSpace;
 }
 
 /**
  * @param {number} index
  * @param {number} value
  */
-export function setCoordStrength(index, value) {
+export function setCoordStrength(index: number, value: number) {
 	if (!coordExists(space, index)) {
 		throw new Error(`Coord does not exist: ${index}`);
 	}
@@ -160,7 +159,7 @@ export function setCoordStrength(index, value) {
 	coordStrengths[index] = clamp(Number(value), 0, 1);
 }
 
-export function setCoordEnabled(index, enabled) {
+export function setCoordEnabled(index: number, enabled: boolean) {
 	if (!coordExists(space, index)) {
 		throw new Error(`Coord does not exist: ${index}`);
 	}
@@ -194,15 +193,10 @@ export function getCoordStrengths() {
  * @param {Rgb} color
  * @returns {Promise<void>}
  */
-export async function copyHexToClipboard(color) {
-	const hex = `#${[color.r, color.g, color.b]
-		.map((channel) => Math.round(channel).toString(16).padStart(2, "0"))
-		.join("")}`;
+export async function copyHexToClipboard(color: Color) {
+	const hex = color.to("hex").toString();
 	await navigator.clipboard.writeText(hex);
 }
-
-// Initialize advanced strengths for default advanced space.
-setAdvancedSpace(space);
 
 /**
  * @returns {string[]}
