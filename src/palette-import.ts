@@ -10,7 +10,7 @@ const MIN_PIXEL_RATIO = 0.33;
  * @param {number} b
  * @returns {string}
  */
-function rgbKey(r, g, b) {
+function rgbKey(r: number, g: number, b: number) {
 	return `${r},${g},${b}`;
 }
 
@@ -18,7 +18,7 @@ function rgbKey(r, g, b) {
  * @param {string} key
  * @returns {PaletteColor}
  */
-function keyToRgb(key) {
+function keyToRgb(key: string) {
 	const [r, g, b] = key.split(",").map(Number);
 	return { r, g, b };
 }
@@ -27,7 +27,7 @@ function keyToRgb(key) {
  * @param {File} file
  * @returns {Promise<{ r: number[], g: number[], b: number[], a: number[] }>}
  */
-async function imageFileToRgba(file) {
+async function imageFileToRgba(file: File) {
 	if (!(file instanceof File)) {
 		throw new TypeError("Expected a File object");
 	}
@@ -35,7 +35,7 @@ async function imageFileToRgba(file) {
 
 	try {
 		const c = document.createElement("canvas");
-		const ctx = c.getContext("2d");
+		const ctx = c.getContext("2d")!;
 		const w = bitmap.width;
 		const h = bitmap.height;
 
@@ -58,7 +58,7 @@ async function imageFileToRgba(file) {
  * @param {File} imageFile
  * @returns {Promise<Map<string, number>>}
  */
-async function countPixelColors(imageFile) {
+async function countPixelColors(imageFile: File) {
 	/** @type {Map<string, number>} */
 	const counts = new Map();
 
@@ -81,7 +81,7 @@ async function countPixelColors(imageFile) {
  * @param {number} rate
  * @returns {Map<string, number>}
  */
-function filterByRatio(counts, rate) {
+function filterByRatio(counts: Map<string, number>, rate: number) {
 	if (counts.size === 0) {
 		return new Map();
 	}
@@ -118,7 +118,7 @@ function filterByRatio(counts, rate) {
  * @param {File} imageFile
  * @returns {Promise<PaletteColor[]>}
  */
-export async function extractPalette(imageFile) {
+export async function extractPalette(imageFile: File) {
 	const uniqueColorCounts = await countPixelColors(imageFile);
 	const filteredColorCounts = filterByRatio(uniqueColorCounts, MIN_PIXEL_RATIO);
 	return Array.from(filteredColorCounts.keys()).map(keyToRgb);
