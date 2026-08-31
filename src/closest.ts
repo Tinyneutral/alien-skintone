@@ -1,38 +1,39 @@
 import Color from "colorjs.io";
+import ColorSpace from "colorjs.io/spaces";
 
 /**
  * Convert to space and multiply each coord by its strength.
- * @param {{ r: number, g: number, b: number }} rgb
- * @param {string} space
+ * @param {Color} color
+ * @param {ColorSpace} space
  * @param {number[]} strengths
  * @returns {Color}
  */
-function toWeightedColor(rgb, space, strengths) {
-	const color = new Color("srgb", [rgb.r / 255, rgb.g / 255, rgb.b / 255]).to(
-		space
-	);
-	color.coords.forEach((value, index) => {
+function toWeighted(color: Color, space: ColorSpace, strengths: number[]) {
+	const weightedColor = color.to(space);
+	weightedColor.coords.forEach((value: number | null, index: number) => {
+		if (value === null) return;
 		const strength = strengths[index] ?? 0;
-		color.coords[index] = value * strength;
+		weightedColor.coords[index] = value * strength;
 	});
-	return color;
+	return weightedColor;
 }
 
 /**
- * @param {{ r: number, g: number, b: number }[]} palette
- * @param {{ r: number, g: number, b: number }} target
- * @param {string} space
+ * @param {Color[]} palette
+ * @param {Color} target
+ * @param {ColorSpace} space
  * @param {number[]} strengths
  * @returns {number[]} sorted ascending by distance
  */
-export function rankPaletteByColor(palette, target, space, strengths) {
-	const cPalette = palette.map((rgb) => toWeightedColor(rgb, space, strengths));
-	const cTarget = toWeightedColor(target, space, strengths);
-	const rankMap = cPalette
-		.map((color, index) => ({ color, index, rank: 0 }))
-		.sort((a, b) => a.color.distance(cTarget) - b.color.distance(cTarget))
+export function rankPaletteByColor(palette: Color[], target: Color, space: ColorSpace, strengths: number[]) {
+	const weightedPalette = palette.map((color) => toWeighted(color, space, strengths));
+	const weightedTarget = toWeighted(target, space, strengths);
+	const rankMap = weightedPalette
+		.map((color, index) => ({ color, index }))
+		.sort((a, b) => a.color.distance(weightedTarget) - b.color.distance(weightedTarget))
 		.map((entry, index) => ({ ...entry, rank: index + 1 }))
-		.sort((a, b) => a.index - b.index);
+		.sort((a, b) => a.index - b.index)
+		.map((entry) => ({ color: entry.color, rank: entry.rank }));
 	const ranks = rankMap.map((entry) => entry.rank);
 	return ranks;
 }

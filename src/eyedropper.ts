@@ -1,31 +1,33 @@
+import Color from "colorjs.io";
+
 /**
  * @param {HTMLImageElement} img
  * @param {number} x
  * @param {number} y
- * @returns {{ r: number, g: number, b: number }}
+ * @returns {Color}
  */
-export function pickColorFromImage(img, x, y) {
-	const c = document.createElement("canvas");
-	const ctx = c.getContext("2d");
+export function pickColorFromImage(img: HTMLImageElement, x: number, y: number) {
+	const c = document.createElement("canvas") as HTMLCanvasElement;
+	const ctx = c.getContext("2d")!;
 
 	c.width = img.naturalWidth;
 	c.height = img.naturalHeight;
 	ctx.drawImage(img, 0, 0);
 
-	const [r, g, b] = ctx.getImageData(x, y, 1, 1).data;
-	return { r, g, b };
+	const [ r, g, b ] = ctx.getImageData(x, y, 1, 1).data as ImageDataArray;
+	return new Color("srgb", [r, g, b]);
 }
 
 /**
  * @param {HTMLCanvasElement} canvas
  * @param {number} x
  * @param {number} y
- * @returns {{ r: number, g: number, b: number }}
+ * @returns {Color}
  */
-export function pickColorFromCanvas(canvas, x, y) {
-	const ctx = canvas.getContext("2d");
-	const [r, g, b] = ctx.getImageData(x, y, 1, 1).data;
-	return { r, g, b };
+export function pickColorFromCanvas(canvas: HTMLCanvasElement, x: number, y: number) {
+	const ctx = canvas.getContext("2d")!;
+	const [r, g, b] = ctx.getImageData(x, y, 1, 1).data as ImageDataArray;
+	return new Color("srgb", [r, g, b]);
 }
 
 /**
@@ -33,7 +35,7 @@ export function pickColorFromCanvas(canvas, x, y) {
  * @param {string} value
  * @returns {{ x: number, y: number }}
  */
-export function parsePxPair(value) {
+export function parsePxPair(value: string) {
 	const parts = value.trim().split(/\s+/);
 	const x = parseFloat(parts[0]);
 	const y = parseFloat(parts[1] ?? parts[0]);
@@ -44,7 +46,7 @@ export function parsePxPair(value) {
  * @param {string} url
  * @returns {Promise<HTMLImageElement>}
  */
-function loadImage(url) {
+function loadImage(url: string) {
 	return new Promise((resolve, reject) => {
 		const img = new Image();
 		img.onload = () => resolve(img);
@@ -59,13 +61,13 @@ function loadImage(url) {
  * @param {HTMLElement} el
  * @returns {Promise<HTMLCanvasElement>}
  */
-export async function cropOutBg(el) {
+export async function cropOutBg(el: HTMLElement) {
 	const style = getComputedStyle(el);
 	const match = style.backgroundImage.match(/url\(["']?(.*?)["']?\)/);
 	if (!match) {
 		throw new Error("No background-image url");
 	}
-	const img = await loadImage(match[1]);
+	const img = await loadImage(match[1]) as HTMLImageElement;
 
 	const nw = img.naturalWidth;
 	const nh = img.naturalHeight;
@@ -90,8 +92,8 @@ export async function cropOutBg(el) {
 	const sw = (cropW / sizeW) * nw;
 	const sh = (cropH / sizeH) * nh;
 
-	const canvas = document.createElement("canvas");
-	const ctx = canvas.getContext("2d");
+	const canvas = document.createElement("canvas") as HTMLCanvasElement;
+	const ctx = canvas.getContext("2d")!;
 	canvas.width = Math.max(1, Math.floor(cropW));
 	canvas.height = Math.max(1, Math.floor(cropH));
 	ctx.drawImage(img, sx, sy, sw, sh, 0, 0, canvas.width, canvas.height);
