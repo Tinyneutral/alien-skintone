@@ -1,0 +1,70 @@
+.palette-item {
+	--rank-great-text: #000;
+	--rank-great-bg: #73d22c;
+	--rank-good-text: #000;
+	--rank-good-bg: #f5cc4f;
+	--rank-meh-text: #888;
+	--rank-meh-bg: #ccc;
+	--rank-none-text: #888;
+	--rank-none-bg: #ccc;
+}
+.palette-item .great {
+	--rank-text: var(--rank-great-text);
+	--rank-bg: var(--rank-great-bg);
+}
+.palette-item .good {
+	--rank-text: var(--rank-good-text);
+	--rank-bg: var(--rank-good-bg);
+}
+.palette-item .meh {
+	--rank-text: var(--rank-meh-text);
+	--rank-bg: var(--rank-meh-bg);
+}
+.palette-item .none {
+	--rank-text: var(--rank-none-text);
+	--rank-bg: var(--rank-none-bg);
+}
+
+.palette-item {
+	min-width: 120px;
+	max-width: 180px;
+	aspect-ratio: 6/1;
+	display: flex;
+	flex-flow: row wrap;
+	align-items: stretch;
+}
+.palette-item .color {
+		flex: 1 0 0;
+}
+.palette-item .feature-color {
+		width: 16px;
+		display: flex;
+		align-items: stretch;
+		justify-content: center;
+}
+.palette-item .feature-color .picked-color-overlay {
+			width: calc(100% / 3);
+}
+.palette-item .rank,
+.palette-item .copy-button {
+		color: var(--rank-text);
+		background-color: var(--rank-bg);
+		display: flex;
+		justify-content: end;
+		align-items: center;
+		text-align: right;
+}
+.palette-item .rank {
+		font-family: var(--mono);
+		font-size: 80%;
+		width: 18px;
+}
+.palette-item .copy-button {
+		text-decoration: underline;
+		width: 42px;
+		border: none;
+		cursor: pointer;
+}
+.palette-item .copy-button:active {
+		color: rgb(from var(--rank-text) r g b / 50%);
+}
