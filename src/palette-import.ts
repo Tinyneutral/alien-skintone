@@ -103,7 +103,7 @@ function filterByRatio(counts, rate) {
 		},
 		{ 0: 0, 1: 0 }
 	);
-	const normalPaletteColorCount = (top2[1] === 0) ? top2[0] : top2[1];
+	const normalPaletteColorCount = top2[1] === 0 ? top2[0] : top2[1];
 	const threshold = Math.floor(normalPaletteColorCount * rate);
 
 	for (const [key, count] of counts.entries()) {
@@ -120,9 +120,6 @@ function filterByRatio(counts, rate) {
  */
 export async function extractPalette(imageFile) {
 	const uniqueColorCounts = await countPixelColors(imageFile);
-	const filteredColorCounts = filterByRatio(
-		uniqueColorCounts,
-		MIN_PIXEL_RATIO
-	);
+	const filteredColorCounts = filterByRatio(uniqueColorCounts, MIN_PIXEL_RATIO);
 	return Array.from(filteredColorCounts.keys()).map(keyToRgb);
 }

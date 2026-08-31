@@ -154,11 +154,7 @@ export function setCoordStrength(index, value) {
 	if (!coordExists(space, index)) {
 		throw new Error(`Coord does not exist: ${index}`);
 	}
-	if (
-		!Number.isInteger(index) ||
-		index < 0 ||
-		index >= coordStrengths.length
-	) {
+	if (!Number.isInteger(index) || index < 0 || index >= coordStrengths.length) {
 		throw new RangeError(`Coord index out of range: ${index}`);
 	}
 	coordStrengths[index] = clamp(Number(value), 0, 1);
