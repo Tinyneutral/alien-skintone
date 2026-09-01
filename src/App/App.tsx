@@ -1,11 +1,11 @@
 import "./App.css";
-import PaletteItemTest from "../PaletteItemTest";
+import { WrapperTabs } from "../slots/Wrapper.tsx";
 
 function App() {
 	return (
 		<>
 			<h1>Alien Skintone</h1>
-			<PaletteItemTest />
+			<WrapperTabs contentType="palette" />
 		</>
 	);
 }
