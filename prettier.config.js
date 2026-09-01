@@ -3,10 +3,19 @@
  * @type {import("prettier").Config}
  */
 const config = {
-	tabWidth: 2,
+	tabWidth: 4,
 	useTabs: true,
 	trailingComma: "es5",
 	bracketSameLine: true,
+	overrides: [
+		{
+			files: ["*.tsx"],
+			options: {
+				parser: "typescript",
+				tabWidth: 2,
+			},
+		},
+	],
 };
 
 export default config;
