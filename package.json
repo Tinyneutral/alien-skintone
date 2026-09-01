@@ -9,13 +9,15 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "format": "prettier --write .",
-		"test": "vitest",
-		"test:browser": "vitest --config=vitest.browser.config.js"
+    "test": "vitest",
+    "test:browser": "vitest --config=vitest.browser.config.js"
   },
   "dependencies": {
+    "@reduxjs/toolkit": "^2.12.0",
     "colorjs.io": "^0.7.1",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
+    "react-redux": "^9.3.0",
     "sanitize.css": "^13.0.0"
   },
   "devDependencies": {
