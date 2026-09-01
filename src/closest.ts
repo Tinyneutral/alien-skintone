@@ -25,12 +25,23 @@ function toWeighted(color: Color, space: ColorSpace, strengths: number[]) {
  * @param {number[]} strengths
  * @returns {number[]} sorted ascending by distance
  */
-export function rankPaletteByColor(palette: Color[], target: Color, space: ColorSpace, strengths: number[]) {
-	const weightedPalette = palette.map((color) => toWeighted(color, space, strengths));
+export function rankPaletteByColor(
+	palette: Color[],
+	target: Color,
+	space: ColorSpace,
+	strengths: number[]
+) {
+	const weightedPalette = palette.map((color) =>
+		toWeighted(color, space, strengths)
+	);
 	const weightedTarget = toWeighted(target, space, strengths);
 	const rankMap = weightedPalette
 		.map((color, index) => ({ color, index }))
-		.sort((a, b) => a.color.distance(weightedTarget) - b.color.distance(weightedTarget))
+		.sort(
+			(a, b) =>
+				a.color.distance(weightedTarget) -
+				b.color.distance(weightedTarget)
+		)
 		.map((entry, index) => ({ ...entry, rank: index + 1 }))
 		.sort((a, b) => a.index - b.index)
 		.map((entry) => ({ color: entry.color, rank: entry.rank }));

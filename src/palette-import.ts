@@ -120,6 +120,9 @@ function filterByRatio(counts: Map<string, number>, rate: number) {
  */
 export async function extractPalette(imageFile: File) {
 	const uniqueColorCounts = await countPixelColors(imageFile);
-	const filteredColorCounts = filterByRatio(uniqueColorCounts, MIN_PIXEL_RATIO);
+	const filteredColorCounts = filterByRatio(
+		uniqueColorCounts,
+		MIN_PIXEL_RATIO
+	);
 	return Array.from(filteredColorCounts.keys()).map(keyToRgb);
 }
