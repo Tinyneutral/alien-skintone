@@ -22,19 +22,22 @@ function PaletteItem({ base, feature, pickedFeature, rank }: PaletteItemProps) {
 		}
 	}, [rank]);
 
-	const bg = (color: Color): React.CSSProperties => {
-		return { backgroundColor: color.toString() };
-	};
-	return (
-		<div className="palette-item">
-			<div className="feature-color" style={bg(feature)}>
-				<div className="picked-color-overlay" style={bg(pickedFeature)}></div>
+		const bg = (color: string): React.CSSProperties => {
+			return { backgroundColor: color };
+		};
+		return (
+			<div className="palette-item">
+				<div className="feature-color" style={bg(featureColor)}>
+					<div
+						className="picked-color-overlay"
+						style={bg(pickedFeatureColor)}></div>
+				</div>
+				<div className="color" style={bg(color)}></div>
+				<p className={`rank ${rankClass}`}>{rank}</p>
+				<button className={`copy-button ${rankClass}`}>Copy</button>
 			</div>
-			<div className="color" style={bg(base)}></div>
-			<p className={`rank ${rankClass}`}>{rank}</p>
-			<button className={`copy-button ${rankClass}`}>Copy</button>
-		</div>
-	);
-}
+		);
+	}
+);
 
 export default PaletteItem;

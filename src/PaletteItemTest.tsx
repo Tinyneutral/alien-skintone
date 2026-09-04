@@ -2,16 +2,19 @@
 import "./PaletteItemTest.css";
 import PaletteItem from "./PaletteItem.jsx";
 import Color from "colorjs.io";
-import { rankPaletteByColor } from "./closest.ts";
+import { rankPaletteByColor, toWeighted } from "./closest.ts";
 
-function generateOrderedPalette(length: number, target: Color) {
-	const palette = [];
-	for (let i = 0; i < length; i++) {
-		palette.push(
-			new Color("srgb", [Math.random(), Math.random(), Math.random()])
-		);
-	}
-	const ranks = rankPaletteByColor(palette, target, "lch", [1, 0, 0]);
+function randomHex() {
+	const byte = () =>
+		Math.floor(Math.random() * 256)
+			.toString(16)
+			.padStart(2, "0");
+	return `#${byte()}${byte()}${byte()}`;
+}
+
+function generateOrderedPalette(length: number, target: string) {
+	const palette = Array.from({ length }, randomHex);
+	const ranks = rankPaletteByColor(palette, target);
 	const sortedPalette = [];
 	for (let i = 0; i < length; i++) {
 		sortedPalette.push(palette[ranks[i] - 1]);
@@ -27,7 +30,7 @@ for (let i = 1; i <= step; i++) {
 		ranks.push(elem);
 	}
 }
-const target = new Color("#cccccc");
+const target = "#cccccc";
 
 function PaletteItemTest() {
 	const palette = generateOrderedPalette(length, target);
@@ -37,13 +40,13 @@ function PaletteItemTest() {
 				{Array.from({ length: length }).map((_, index) => {
 					const rank = ranks[index];
 					const color = palette[rank - 1];
-					const featureColor = palette[rank - 1].set("lch.c", 0);
+					const featureColor = toWeighted(color, Color.spaces.lch, [1, 0, 1]);
 					return (
 						<PaletteItem
 							key={index}
-							color={color}
-							featureColor={featureColor}
-							pickedFeatureColor={target}
+							base={color}
+							feature={featureColor}
+							pickedFeature={target}
 							rank={rank}
 						/>
 					);

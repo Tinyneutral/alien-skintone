@@ -1,3 +1,5 @@
+import Color from "colorjs.io";
+
 /**
  * @typedef {{ r: number, g: number, b: number }} PaletteColor
  */
@@ -116,7 +118,7 @@ function filterByRatio(counts: Map<string, number>, rate: number) {
 
 /**
  * @param {File} imageFile
- * @returns {Promise<PaletteColor[]>}
+ * @returns {Promise<string[]>} hex
  */
 export async function extractPalette(imageFile: File) {
 	const uniqueColorCounts = await countPixelColors(imageFile);
@@ -124,5 +126,8 @@ export async function extractPalette(imageFile: File) {
 		uniqueColorCounts,
 		MIN_PIXEL_RATIO
 	);
-	return Array.from(filteredColorCounts.keys()).map(keyToRgb);
+	return Array.from(filteredColorCounts.keys()).map((key) => {
+		const { r, g, b } = keyToRgb(key);
+		return new Color("srgb", [r, g, b]).toString({ format: "hex" });
+	});
 }

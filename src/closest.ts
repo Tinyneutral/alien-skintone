@@ -3,48 +3,32 @@ import ColorSpace from "colorjs.io/spaces";
 
 /**
  * Convert to space and multiply each coord by its strength.
- * @param {Color} color
+ * @param {string} color hex
  * @param {ColorSpace} space
  * @param {number[]} strengths
- * @returns {Color}
+ * @returns {string} hex
  */
-function toWeighted(color: Color, space: ColorSpace, strengths: number[]) {
-	const weightedColor = color.to(space);
+export function toWeighted(
+	color: string,
+	space: ColorSpace,
+	strengths: number[]
+) {
+	const weightedColor = new Color(color).to(space);
 	weightedColor.coords.forEach((value: number | null, index: number) => {
 		if (value === null) return;
 		const strength = strengths[index] ?? 0;
 		weightedColor.coords[index] = value * strength;
 	});
-	return weightedColor;
+	return weightedColor.toString({ format: "hex" });
 }
 
 /**
- * @param {Color[]} palette
- * @param {Color} target
- * @param {ColorSpace} space
- * @param {number[]} strengths
- * @returns {number[]} sorted ascending by distance
+ * @param {string} sColor1 hex
+ * @param {string} sColor2 hex
+ * @returns {number} deltaE
  */
-export function rankPaletteByColor(
-	palette: Color[],
-	target: Color,
-	space: ColorSpace,
-	strengths: number[]
-) {
-	const weightedPalette = palette.map((color) =>
-		toWeighted(color, space, strengths)
-	);
-	const weightedTarget = toWeighted(target, space, strengths);
-	const rankMap = weightedPalette
-		.map((color, index) => ({ color, index }))
-		.sort(
-			(a, b) =>
-				a.color.distance(weightedTarget) -
-				b.color.distance(weightedTarget)
-		)
-		.map((entry, index) => ({ ...entry, rank: index + 1 }))
-		.sort((a, b) => a.index - b.index)
-		.map((entry) => ({ color: entry.color, rank: entry.rank }));
-	const ranks = rankMap.map((entry) => entry.rank);
-	return ranks;
+export function deltaE(sColor1: string, sColor2: string) {
+	const color1 = new Color(sColor1);
+	const color2 = new Color(sColor2);
+	return color1.deltaEOK(color2);
 }
