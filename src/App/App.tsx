@@ -36,6 +36,7 @@ function PaletteWithTabs() {
 						<PalettePreview
 							colors6={colors.slice(0, 6)}
 							length={colors.length}
+							isActive={index === state.activeIndex}
 						/>
 					</Tab>
 				))}

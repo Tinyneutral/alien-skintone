@@ -41,6 +41,7 @@
 
 	--primary: var(--brown-100);
 	--primary-dull: var(--brown-200);
+	--primary-duller: var(--brown-300);
 	--bg: var(--brown-900);
 	--bg-dull: var(--brown-800);
 	--secondary-brighter: var(--brown-500);
