@@ -1,0 +1,28 @@
+.preview {
+    display: flex;
+    flex-direction: column;
+    border: 2px solid var(--primary);
+}
+.preview .color-grid {
+        display: flex;
+        flex-flow: row wrap;
+        overflow: hidden;
+        width: calc(20px * 2);
+        height: calc(20px * 3 - 12px);
+        background-color: var(--primary-dull);
+}
+.preview .color-grid .color {
+            width: 20px;
+            height: 20px;
+}
+.preview .color-count {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        height: 20px;
+        background-color: var(--primary);
+        font-size: 15px;
+        font-weight: 600;
+        color: var(--secondary);
+}
