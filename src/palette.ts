@@ -1,2 +1,2 @@
-export type PaletteData = string[];
-export const initialPalette: PaletteData = [];
+export type Colors = string[];
+export const initialColors: Colors = [];
