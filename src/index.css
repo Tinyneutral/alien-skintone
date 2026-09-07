@@ -28,14 +28,28 @@
 }
 
 :root {
-	--text: #6b6375;
-	--text-h: #08060d;
-	--bg: #fff;
-	--border: #e5e4e7;
-	--code-bg: #f4f3ec;
-	--accent: #aa3bff;
-	--accent-bg: rgba(170, 59, 255, 0.1);
-	--accent-border: rgba(170, 59, 255, 0.5);
+	--brown-100: #FFF8E5;
+	--brown-200: #D5C8AE;
+	--brown-300: #AD9A7A;
+	--brown-400: #9A8361;
+	--brown-500: #876D49;
+	--brown-600: #755731;
+	--brown-700: #634217;
+	--brown-800: #3D2412;
+	--brown-900: #1D0D08;
+	--green: #1C6C00;
+
+	--primary: var(--brown-100);
+	--primary-dull: var(--brown-200);
+	--bg: var(--brown-900);
+	--bg-dull: var(--brown-800);
+	--secondary-brighter: var(--brown-500);
+	--secondary-bright: var(--brown-600);
+	--secondary: var(--brown-700);
+	--secondary-dull: var(--brown-800);
+	--accent: var(--green);
+
+	--text: var(--primary);
 
 	--sans: "Atkinson Hyperlegible Next", Verdana;
 	--heading: "Questrial", Verdana;
