@@ -1,0 +1,4 @@
+div.palette {
+    padding: 12px;
+    background-color: var(--primary);
+}

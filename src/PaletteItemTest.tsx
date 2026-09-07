@@ -2,7 +2,7 @@
 import "./PaletteItemTest.css";
 import PaletteItem from "./PaletteItem.jsx";
 import Color from "colorjs.io";
-import { rankPaletteByColor, toWeighted } from "./closest.ts";
+import { toWeighted } from "./closest.ts";
 
 function randomHex() {
 	const byte = () =>

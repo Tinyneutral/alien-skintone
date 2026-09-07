@@ -1,19 +1,25 @@
 import { useCallback, useState } from "react";
 
-import type { PaletteData } from "./palette.ts";
+import type { Colors } from "./palette.ts";
 import PaletteItem from "./PaletteItem.tsx";
 
+import "./Palette.css";
+
 type PaletteProps = {
-	colors: PaletteData;
-	setColors: (colors: PaletteData) => void;
+	colors: Colors;
+	setColors: (colors: Colors) => void;
 };
 
 function Palette({ colors, setColors }: PaletteProps) {
-	const [closenesses, setClosenesses] = useState<number[]>(Array(colors.length).fill(Number.POSITIVE_INFINITY));
+	const [closenesses, setClosenesses] = useState<number[]>(
+		Array(colors.length).fill(Number.POSITIVE_INFINITY)
+	);
 	const setCloseness = useCallback((closeness: number, index: number) => {
 		setClosenesses((prev) => {
 			if (index >= prev.length) {
-				const pad = Array(index - prev.length + 1).fill(Number.POSITIVE_INFINITY);
+				const pad = Array(index - prev.length + 1).fill(
+					Number.POSITIVE_INFINITY
+				);
 				return [...prev, ...pad, closeness];
 			}
 			return prev.with(index, closeness);
@@ -52,7 +58,7 @@ function Palette({ colors, setColors }: PaletteProps) {
 	console.log(closenesses);
 
 	return (
-		<div>
+		<div className="palette">
 			{colors.map((color, i) => (
 				<PaletteItem
 					key={i}
@@ -100,8 +106,8 @@ function getRanks(closenesses: number[]) {
 		.map((entry, index) => ({ ...entry, rank: index + 1 }));
 	const rankMapWithTies = rankMap;
 	for (let i = 1; i < rankMap.length; i++) {
-		const current 	= rankMapWithTies[i];
-		const prev 		= rankMapWithTies[i - 1];
+		const current = rankMapWithTies[i];
+		const prev = rankMapWithTies[i - 1];
 		if (current.closeness === prev.closeness) {
 			current.rank = prev.rank;
 		}

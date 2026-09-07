@@ -13,7 +13,13 @@ type PaletteItemProps = {
 };
 
 const PaletteItem = memo(
-	({ color, rank, closeness, setCloseness, closenessIndex }: PaletteItemProps) => {
+	({
+		color,
+		rank,
+		closeness,
+		setCloseness,
+		closenessIndex,
+	}: PaletteItemProps) => {
 		const pickedColor = useAppSelector((state) => state.pickedColor);
 		const featureSpace = Color.spaces.oklab; // TODO: redux
 		const featureWeights: number[] = useMemo(() => [1, 0, 0], []); // TODO: redux
