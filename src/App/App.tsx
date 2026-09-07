@@ -9,7 +9,6 @@ import "./App.css";
 function App() {
 	return (
 		<>
-			<h1>Alien Skintone</h1>
 			<PaletteWithTabs />
 		</>
 	);
@@ -25,7 +24,8 @@ function PaletteWithTabs() {
 	} = useSlots<Colors>([]);
 
 	return (
-		<section className="palette">
+		<section className="palettes">
+			<h2>Palettes</h2>
 			<div className="tabs">
 				{state.contents.map((colors: Colors, index: number) => (
 					<Tab<Colors>
