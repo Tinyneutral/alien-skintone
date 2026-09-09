@@ -7,7 +7,7 @@ type SlotState<T> = {
 
 type SlotAction<T> =
 	| { type: "added-slot"; content: T }
-	| { type: "deleted-slot"; index: number }
+	| { type: "deleted-slot"; index: number; initWhenLast?: boolean; initContent?: T }
 	| { type: "selected-slot"; index: number };
 
 type ContentAction<T> = { type: "changed-content"; content: SetStateAction<T> };
@@ -23,6 +23,16 @@ function reducer<T>(state: SlotState<T>, action: EveryAction<T>): SlotState<T> {
 				activeIndex: state.contents.length,
 			};
 		case "deleted-slot":
+			if (action.initWhenLast && state.contents.length === 1) {
+				if (!action.initContent) {
+					throw new Error("initContent is required when initWhenLast is true");
+				}
+				return {
+					...state,
+					contents: [action.initContent],
+					activeIndex: 0,
+				};
+			}
 			return {
 				...state,
 				contents: state.contents.filter(
