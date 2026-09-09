@@ -46,13 +46,13 @@ const PaletteItem = memo(
 
 		const rankClass = useMemo(() => {
 			if (typeof rank !== "number") {
-				return "none";
+				return "rank-none";
 			} else if (rank <= 3) {
-				return "great";
+				return "rank-great";
 			} else if (rank <= 10) {
-				return "good";
+				return "rank-good";
 			} else {
-				return "meh";
+				return "rank-meh";
 			}
 		}, [rank]);
 
@@ -67,11 +67,27 @@ const PaletteItem = memo(
 						style={bg(pickedFeatureColor)}></div>
 				</div>
 				<div className="color" style={bg(color)}></div>
-				<p className={`rank ${rankClass}`}>{rank}</p>
-				<button className={`copy-button ${rankClass}`}>Copy</button>
+				<div className={`meta ${rankClass}`}>
+					<p className="rank">{rank}</p>
+					<button className="edit-button">Edit</button>
+					<button className="copy-button">Copy</button>
+				</div>
 			</div>
 		);
 	}
 );
 
+const PaletteItemHeader = memo(() => {
+	return (
+		<div className="palette-item header">
+			<div className="feature-color">
+				<div className="picked-color-overlay"></div>
+			</div>
+			<p className="color">Color</p>
+			<p className="meta">Rank</p>
+		</div>
+	);
+});
+
+export { PaletteItem, PaletteItemHeader };
 export default PaletteItem;

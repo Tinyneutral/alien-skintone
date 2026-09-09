@@ -1,7 +1,7 @@
 import { useCallback, useState } from "react";
 
 import type { Colors } from "./palette.ts";
-import PaletteItem from "./PaletteItem.tsx";
+import PaletteItem, { PaletteItemHeader } from "./PaletteItem.tsx";
 
 import "./Palette.css";
 
@@ -54,11 +54,10 @@ function Palette({ colors, setColors }: PaletteProps) {
 			"#ffffff",
 		]);
 	};
-	console.log(colors);
-	console.log(closenesses);
 
 	return (
 		<div className="palette">
+			<PaletteItemHeader />
 			{colors.map((color, i) => (
 				<PaletteItem
 					key={i}
