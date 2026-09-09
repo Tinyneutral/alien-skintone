@@ -1,4 +1,4 @@
-import { useReducer } from "react";
+import { useReducer, type SetStateAction } from "react";
 
 type SlotState<T> = {
 	contents: T[];
@@ -10,7 +10,7 @@ type SlotAction<T> =
 	| { type: "deleted-slot"; index: number }
 	| { type: "selected-slot"; index: number };
 
-type ContentAction<T> = { type: "changed-content"; content: T };
+type ContentAction<T> = { type: "changed-content"; content: SetStateAction<T> };
 
 type EveryAction<T> = SlotAction<T> | ContentAction<T>;
 
@@ -38,9 +38,15 @@ function reducer<T>(state: SlotState<T>, action: EveryAction<T>): SlotState<T> {
 		case "changed-content":
 			return {
 				...state,
-				contents: state.contents.map((c, i) =>
-					i === state.activeIndex ? action.content : c
-				),
+				contents: state.contents.map((c, i) => {
+					if (i !== state.activeIndex) {
+						return c;
+					}
+					const next = action.content;
+					return typeof next === "function"
+						? (next as (prev: T) => T)(c)
+						: next;
+				}),
 			};
 		default:
 			throw new Error("Invalid action type");
@@ -54,7 +60,7 @@ function useSlots<T>(initialContent: T) {
 	});
 
 	const content = state.contents[state.activeIndex];
-	const setContent = (nextContent: T) => {
+	const setContent = (nextContent: SetStateAction<T>) => {
 		dispatch({
 			type: "changed-content",
 			content: nextContent,
