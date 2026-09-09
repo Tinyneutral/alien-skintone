@@ -32,17 +32,20 @@ function PaletteWithTabs() {
 						key={index}
 						index={index}
 						isActive={index === state.activeIndex}
-						dispatch={dispatch}>
+						label={`${colors.length}`}
+						dispatch={dispatch}
+						init={init}>
 						<PalettePreview
 							colors6={colors.slice(0, 6)}
-							length={colors.length}
 							isActive={index === state.activeIndex}
 						/>
 					</Tab>
 				))}
-				<NewTab<Colors> init={init} dispatch={dispatch} />
+				<NewTab<Colors> init={init} dispatch={dispatch}>
+					<PalettePreview colors6={[]} isActive={false} />
+				</NewTab>
 			</div>
-			<Palette colors={colors} setColors={setColors} />
+			{colors && <Palette colors={colors} setColors={setColors} />}
 		</section>
 	);
 }

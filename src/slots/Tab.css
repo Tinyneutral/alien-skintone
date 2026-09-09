@@ -1,19 +1,79 @@
 .tabs {
     display: inline-flex;
+    align-items: end;
     overflow-x: auto;
     gap: 4px;
 }
 
-.tab {
-    display: inline-flex;
-    justify-content: center;
-    align-items: center;
-    padding: 4px 0px 0px;
-    border: none;
-    background-color: var(--secondary-dull);
-    cursor: pointer;
+.tab:not(.active) {
+    border-color: var(--secondary-dull);
+    background-color: var(--primary-dull);
+    p {
+        color: var(--secondary-bright);
+    }
 }
-
 .tab.active {
     background-color: var(--primary);
+    p {
+        color: var(--secondary-brighter);
+    }
+}
+.new-tab {
+    border-color: var(--secondary);
+}
+
+.new-tab,
+.tab {
+    --border: 1px;
+    --head-height: 1rem;
+}
+.new-tab {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: calc(var(--preview-width) + var(--border) * 2);
+    height: calc(var(--preview-height) + var(--head-height));
+    border-width: var(--border) var(--border) 0;
+    border-style: solid solid none;
+}
+.new-tab button {
+        font-size: 0.75rem;
+        color: var(--accent);
+        text-decoration: underline;
+        cursor: pointer;
+        background: none;
+        border: none;
+        padding: 0;
+}
+.tab {
+    display: inline-flex;
+    flex-flow: column nowrap;
+    align-items: center;
+    cursor: pointer;
+    width: calc(var(--preview-width) + var(--border) * 2);
+    height: calc(var(--preview-height) + var(--head-height));
+    padding: 0 var(--border) 0;
+}
+.tab .head {
+        display: flex;
+        justify-content: space-between;
+        align-items: start;
+        align-self: stretch;
+        height: var(--head-height);
+        line-height: var(--head-height);
+        padding: 0 calc(var(--border) + 0.1rem);
+        font-size: 0.75rem;
+}
+.tab .head p {
+            font-weight: 600;
+}
+.tab .head .close-button {
+            padding: 0.05rem 0 0;
+            line-height: 0.6rem;
+            font-size: 0.6rem;
+            color: var(--accent);
+            text-decoration: underline;
+            cursor: pointer;
+            background: none;
+            border: none;
 }
