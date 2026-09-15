@@ -5,7 +5,7 @@ import { toWeighted, deltaE } from "./closest.ts";
 import "./PaletteItem.css";
 
 type PaletteItemProps = {
-	color: string;
+	color: cssColor;
 	rank: number | "-";
 	closeness: number;
 	setCloseness: (closeness: number, index: number) => void;
@@ -55,8 +55,7 @@ const PaletteItem = memo(
 				return "rank-meh";
 			}
 		}, [rank]);
-
-		const bg = (color: string): React.CSSProperties => {
+		const bg = (color: cssColor): React.CSSProperties => {
 			return { backgroundColor: color };
 		};
 		return (

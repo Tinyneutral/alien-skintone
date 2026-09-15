@@ -4,13 +4,13 @@ import Color from "colorjs.io";
  * @param {HTMLImageElement} img
  * @param {number} x
  * @param {number} y
- * @returns {string} hex
+ * @returns {cssColor}
  */
 export function pickColorFromImage(
 	img: HTMLImageElement,
 	x: number,
 	y: number
-) {
+): cssColor {
 	const c = document.createElement("canvas") as HTMLCanvasElement;
 	const ctx = c.getContext("2d")!;
 
@@ -19,23 +19,23 @@ export function pickColorFromImage(
 	ctx.drawImage(img, 0, 0);
 
 	const [r, g, b] = ctx.getImageData(x, y, 1, 1).data as ImageDataArray;
-	return new Color("srgb", [r, g, b]).toString({ format: "hex" });
+	return new Color("srgb", [r, g, b]).display();
 }
 
 /**
  * @param {HTMLCanvasElement} canvas
  * @param {number} x
  * @param {number} y
- * @returns {string} hex
+ * @returns {cssColor}
  */
 export function pickColorFromCanvas(
 	canvas: HTMLCanvasElement,
 	x: number,
 	y: number
-) {
+): cssColor {
 	const ctx = canvas.getContext("2d")!;
 	const [r, g, b] = ctx.getImageData(x, y, 1, 1).data as ImageDataArray;
-	return new Color("srgb", [r, g, b]).toString({ format: "hex" });
+	return new Color("srgb", [r, g, b]).display();
 }
 
 /**

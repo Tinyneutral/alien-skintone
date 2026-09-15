@@ -4,7 +4,7 @@ import PaletteItem from "./PaletteItem.jsx";
 import Color from "colorjs.io";
 import { toWeighted } from "./closest.ts";
 
-function randomHex() {
+function randomColor(): cssColor {
 	const byte = () =>
 		Math.floor(Math.random() * 256)
 			.toString(16)
@@ -13,7 +13,7 @@ function randomHex() {
 }
 
 function generateOrderedPalette(length: number, target: string) {
-	const palette = Array.from({ length }, randomHex);
+	const palette = Array.from({ length }, randomColor);
 	const ranks = rankPaletteByColor(palette, target);
 	const sortedPalette = [];
 	for (let i = 0; i < length; i++) {

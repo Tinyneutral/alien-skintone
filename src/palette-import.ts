@@ -118,9 +118,9 @@ function filterByRatio(counts: Map<string, number>, rate: number) {
 
 /**
  * @param {File} imageFile
- * @returns {Promise<string[]>} hex
+ * @returns {Promise<cssColor[]>}
  */
-export async function extractPalette(imageFile: File) {
+export async function extractPalette(imageFile: File): Promise<cssColor[]> {
 	const uniqueColorCounts = await countPixelColors(imageFile);
 	const filteredColorCounts = filterByRatio(
 		uniqueColorCounts,
@@ -128,6 +128,6 @@ export async function extractPalette(imageFile: File) {
 	);
 	return Array.from(filteredColorCounts.keys()).map((key) => {
 		const { r, g, b } = keyToRgb(key);
-		return new Color("srgb", [r, g, b]).toString({ format: "hex" });
+		return new Color("srgb", [r, g, b]).display();
 	});
 }

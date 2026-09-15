@@ -194,12 +194,11 @@ export function getCoordStrengths() {
 }
 
 /**
- * @param {string} color hex
+ * @param {cssColor} color
  * @returns {Promise<void>}
  */
-export async function copyHexToClipboard(color: string) {
-	const hex = new Color(color).toString({ format: "hex" });
-	await navigator.clipboard.writeText(hex);
+export async function copyCssColorToClipboard(color: cssColor) {
+	await navigator.clipboard.writeText(new Color(color).display());
 }
 
 /**
