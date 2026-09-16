@@ -99,29 +99,41 @@
 }
 
 .edit-palette-item {
-	display: grid;
-	grid-template-areas:
-	"coords space space space"
-	"coords submit cancel out-of-gamut";
-	grid-template-rows: 2fr 1fr;
+	display: flex;
+}
+.edit-palette-item .color-preview {
+
+}
+.edit-palette-item .color-preview .prev,
+.edit-palette-item .color-preview .now {
+}
 .edit-palette-item .coords {
-		grid-area: coords;
+
 }
-.edit-palette-item .coords label {
+.edit-palette-item .coords .coord {
 }
-.edit-palette-item .coords label span {
+.edit-palette-item .coords .coord .label,
+.edit-palette-item .coords .coord input {
 }
-.edit-palette-item .coords label input {
+.edit-palette-item .coords .coord .label {
 }
-.edit-palette-item select.space {
-		grid-area: space;
+.edit-palette-item .coords .coord input {
 }
-.edit-palette-item button.submit {
-		grid-area: submit;
+.edit-palette-item .right {
+
 }
-.edit-palette-item button.cancel {
-		grid-area: cancel;
+.edit-palette-item .right select.space {
+
 }
-.edit-palette-item .out-of-gamut.icon {
-		grid-area: out-of-gamut;
+.edit-palette-item .right .bottom {
+
+}
+.edit-palette-item .right .bottom button.submit {
+
+}
+.edit-palette-item .right .bottom button.cancel {
+
+}
+.edit-palette-item .right .bottom .out-of-gamut.icon {
+
 }
