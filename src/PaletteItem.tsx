@@ -125,6 +125,7 @@ function EditPaletteItem({
 		return { backgroundColor: color };
 	};
 	return (
+		<div className="edit-palette-item-container">
 		<div className="edit-palette-item">
 			<div className="preview">
 				<div className="now" style={bg(color.display())}></div>
@@ -172,6 +173,7 @@ function EditPaletteItem({
 				</select>
 				</div>
 			</div>
+		</div>
 		</div>
 	);
 }

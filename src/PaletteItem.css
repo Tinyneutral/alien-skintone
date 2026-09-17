@@ -97,6 +97,12 @@
 		width: calc(1.5rem + 2rem + 2rem);
 }
 
+.edit-palette-item-container {
+	container-type: inline-size;
+	container-name: edit-palette-item;
+	min-width: 10rem;
+	max-width: 20rem;
+}
 .edit-palette-item {
 	height: 3.2rem;
 	display: flex;
@@ -120,6 +126,17 @@
 .edit-palette-item .not-preview .not-coords .not-space {
 				display: flex;
 }
+@container edit-palette-item (inline-size <= 15.25rem) {
+	.edit-palette-item {
+		height: 6.4rem;
+	}
+	.edit-palette-item .not-preview {
+			flex-direction: column;
+	}
+	.edit-palette-item .not-preview .not-coords {
+				flex-direction: column;
+				padding: 0;
+	}
 }
 
 .edit-palette-item .preview {
