@@ -1,6 +1,6 @@
-import type { SlotAction } from "./useSlots.ts";
+import type { SlotAction } from "/features/useSlots.ts";
 
-import "./Tab.css";
+import "/Tab.css";
 
 interface TabProps<T> {
 	index: number;
