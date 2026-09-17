@@ -101,11 +101,22 @@
 .edit-palette-item {
 	display: flex;
 }
-.edit-palette-item .color-preview {
-
+.edit-palette-item .not-preview {
+		display: flex;
 }
-.edit-palette-item .color-preview .prev,
-.edit-palette-item .color-preview .now {
+.edit-palette-item .not-preview .not-coords {
+			display: flex;
+}
+.edit-palette-item .not-preview .not-coords .not-space {
+				display: flex;
+}
+}
+
+.edit-palette-item .preview {
+}
+.edit-palette-item .preview .now {
+}
+.edit-palette-item .preview .prev {
 }
 .edit-palette-item .coords {
 
@@ -119,21 +130,15 @@
 }
 .edit-palette-item .coords .coord input {
 }
-.edit-palette-item .right {
-
+.edit-palette-item select.space {
 }
-.edit-palette-item .right select.space {
-
+.edit-palette-item button {
 }
-.edit-palette-item .right .bottom {
-
+.edit-palette-item button.submit {
 }
-.edit-palette-item .right .bottom button.submit {
-
+.edit-palette-item button.cancel {
 }
-.edit-palette-item .right .bottom button.cancel {
-
+.edit-palette-item .out-of-gamut {
 }
-.edit-palette-item .right .bottom .out-of-gamut.icon {
-
+.edit-palette-item .out-of-gamut img {
 }
