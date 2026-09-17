@@ -1,7 +1,7 @@
 import { useCallback, useState, type SetStateAction } from "react";
 
 import type { Colors } from "/palette.ts";
-import PaletteItemWrapper, {
+import PaletteItem, {
 	NewPaletteItem,
 	PaletteItemHeader,
 } from "/PaletteItem.tsx";
@@ -10,7 +10,7 @@ import "/Palette.css";
 
 type PaletteProps = {
 	colors: Colors;
-	setColors: (colors: Colors) => void;
+	setColors: (colors: SetStateAction<Colors>) => void;
 };
 
 function Palette({ colors, setColors }: PaletteProps) {
@@ -30,16 +30,18 @@ function Palette({ colors, setColors }: PaletteProps) {
 	}, []);
 	const ranks = getRanks(closenesses);
 
-	const addColor = () => {
-		setColors([...colors, "#000000"]);
+	const addColor = (color: cssColor) => {
+		setColors((prev) => [...prev, color]);
 		setClosenesses((prev) => [...prev, Number.POSITIVE_INFINITY]);
 	};
 	const removeColor = (index: number) => {
-		setColors(colors.filter((_, i) => i !== index));
+		setColors((prev) => prev.filter((_, i) => i !== index));
 		setClosenesses((prev) => prev.filter((_, i) => i !== index));
 	};
-	const setColor = (index: number, color: string) => {
-		setColors(colors.map((prevColor, i) => (i === index ? color : prevColor)));
+	const setColor = (color: cssColor, index: number) => {
+		setColors((prev) =>
+			prev.map((prevColor, i) => (i === index ? color : prevColor))
+		);
 	};
 
 	const [index, setIndex] = useState(0);
@@ -64,17 +66,18 @@ function Palette({ colors, setColors }: PaletteProps) {
 			{colors.map((color, i) => (
 				<PaletteItem
 					key={i}
+					index={i}
 					color={color}
 					rank={ranks[i]}
 					closeness={closenesses[i]}
 					setCloseness={setCloseness}
-					closenessIndex={i}
+					setColor={setColor}
 				/>
 			))}
+			<NewPaletteItem addColor={addColor} />
 			<button onClick={handleInit}>Init Palette</button>
 			{colors.length > 0 && (
 				<>
-					<button onClick={addColor}>Add Color</button>
 					<input
 						type="number"
 						value={index}
@@ -82,14 +85,6 @@ function Palette({ colors, setColors }: PaletteProps) {
 					/>
 					<button onClick={() => removeColor(index)}>
 						Remove Color at Index
-					</button>
-					<input
-						type="color"
-						value={colors[index]}
-						onChange={(e) => setColor(index, e.target.value)}
-					/>
-					<button onClick={() => setColor(index, colors[index])}>
-						Set Color at Index
 					</button>
 				</>
 			)}

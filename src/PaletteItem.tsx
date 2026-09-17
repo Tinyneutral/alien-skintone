@@ -1,8 +1,13 @@
 import Color from "colorjs.io";
-import { useEffect, useMemo, memo } from "react";
+import { useState, useEffect, useMemo, memo } from "react";
+
 import { useAppDispatch, useAppSelector } from "/app/hooks.ts";
+import { setDefaultEditSpace } from "/features/defaultEditSpace.ts";
 import { toWeighted, deltaE } from "./closest.ts";
-import "./PaletteItem.css";
+import { copyCssColorToClipboard } from "/feature-select.ts";
+import outOfGamutUrl from "/assets/svg/out-of-gamut.svg";
+
+import "/PaletteItem.css";
 
 type PaletteItemProps = {
 	color: cssColor;
@@ -10,6 +15,7 @@ type PaletteItemProps = {
 	closeness: number;
 	setCloseness: (closeness: number, index: number) => void;
 	closenessIndex: number;
+	setIsEditing: (isEditing: boolean) => void;
 };
 
 const PaletteItem = memo(
@@ -19,6 +25,7 @@ const PaletteItem = memo(
 		closeness,
 		setCloseness,
 		closenessIndex,
+		setIsEditing,
 	}: PaletteItemProps) => {
 		const pickedColor = useAppSelector((state) => state.pickedColor);
 		const featureSpace = Color.spaces.oklab; // TODO: redux
@@ -40,9 +47,14 @@ const PaletteItem = memo(
 			if (newCloseness !== closeness) {
 				setCloseness(newCloseness, closenessIndex);
 			}
-			// setCloseness is recreated each parent render; color/newCloseness are the intended triggers.
-			// eslint-disable-next-line react-hooks/exhaustive-deps
-		}, [color, newCloseness, closeness]);
+		}, [color, closeness, newCloseness, closenessIndex, setCloseness]);
+
+		const handleEdit = () => {
+			setIsEditing(true);
+		};
+		const handleCopy = () => {
+			copyCssColorToClipboard(color);
+		};
 
 		const rankClass = useMemo(() => {
 			if (typeof rank !== "number") {
@@ -68,13 +80,117 @@ const PaletteItem = memo(
 				<div className="color" style={bg(color)}></div>
 				<div className={`meta ${rankClass}`}>
 					<p className="rank">{rank}</p>
-					<button className="edit-button">Edit</button>
-					<button className="copy-button">Copy</button>
+					<button className="edit-button" onClick={handleEdit}>
+						Edit
+					</button>
+					<button className="copy-button" onClick={handleCopy}>
+						Copy
+					</button>
 				</div>
 			</div>
 		);
 	}
 );
+
+type EditPaletteItemProps = {
+	initialColor: cssColor;
+	submitColor: (color: cssColor) => void;
+	cancel: () => void;
+};
+
+function EditPaletteItem({
+	initialColor,
+	submitColor,
+	cancel,
+}: EditPaletteItemProps) {
+	const defaultSpace = useAppSelector((state) => state.defaultEditSpace);
+	const dispatch = useAppDispatch();
+	const [color, setColor] = useState(new Color(initialColor).to(defaultSpace));
+	console.log(color.space.name);
+	console.log(color.space.coords);
+	console.log(color.coords);
+
+	const setCoord = (coordName: string, value: number) => {
+		setColor((prev) => new Color(prev).set(coordName, value));
+	};
+	const setSpace = (space: string) => {
+		setColor((prev) => new Color(prev).to(Color.spaces[space]));
+	};
+	const handleSubmit = () => {
+		dispatch(setDefaultEditSpace(color.space.id));
+		submitColor(color.display());
+	};
+
+	const bg = (color: cssColor): React.CSSProperties => {
+		return { backgroundColor: color };
+	};
+	return (
+		<div className="edit-palette-item">
+			<div className="preview">
+				<div className="now" style={bg(color.display())}></div>
+				<div className="prev" style={bg(initialColor)}></div>
+			</div>
+			<div className="not-preview">
+			<div className="coords">
+				{Object.entries(color.space.coords).map(([name, coord], index) => (
+					<label className="coord" key={name}>
+						<span className="label">{name.toUpperCase()}</span>
+						<input
+							type="number"
+							min={coord.refRange?.[0] ?? 0}
+							max={coord.refRange?.[1] ?? 1}
+							step={(rangeWidthDigit(coord.refRange) ?? 1) / 100}
+							value={no0atEnd(color.coords[index]?.toPrecision(5)) ?? 0}
+							onChange={(e) => setCoord(name, parseFloat(e.target.value))}
+						/>
+					</label>
+				))}
+				</div>
+				<div className="not-coords">
+				<div className="not-space">
+					<button className="submit" onClick={handleSubmit}>
+						Submit
+					</button>
+					<button className="cancel" onClick={cancel}>
+						Cancel
+					</button>
+					{!color.inGamut() && (
+						<div className="out-of-gamut">
+							<img src={outOfGamutUrl} alt="Out of gamut" />
+						</div>
+					)}
+				</div>
+				<select
+					className="space"
+					value={color.space.id}
+					onChange={(e) => setSpace(e.target.value)}>
+					{Object.entries(Color.spaces).map(([name, { id }]) => (
+						<option key={name} value={id}>
+							{name}
+						</option>
+					))}
+				</select>
+				</div>
+			</div>
+		</div>
+	);
+}
+
+function rangeWidthDigit(range: [number, number] | undefined) {
+	if (!range) {
+		return null;
+	}
+	const width = range[1] - range[0];
+	const widthDigit = width.toPrecision(1).replace(/[^0\D]/, "1");
+	return parseFloat(widthDigit);
+}
+
+function no0atEnd(value: string | undefined) {
+	if (!value) {
+		return null;
+	}
+	return parseFloat(value);
+}
 
 const PaletteItemHeader = memo(() => {
 	return (
@@ -88,5 +204,89 @@ const PaletteItemHeader = memo(() => {
 	);
 });
 
-export { PaletteItem, PaletteItemHeader };
-export default PaletteItem;
+type PaletteItemWrapperProps = {
+	index: number;
+	color: cssColor;
+	rank: number | "-";
+	closeness: number;
+	setColor: (color: cssColor, index: number) => void;
+	setCloseness: (closeness: number, index: number) => void;
+};
+
+const PaletteItemWrapper = memo(
+	({
+		index,
+		color,
+		rank,
+		closeness,
+		setColor,
+		setCloseness,
+	}: PaletteItemWrapperProps) => {
+		const [isEditing, setIsEditing] = useState(false);
+		const handleSetColor = (color: cssColor) => {
+			setIsEditing(false);
+			setColor(color, index);
+		};
+		const cancelEdit = () => {
+			setIsEditing(false);
+		};
+
+		if (isEditing) {
+			return (
+				<EditPaletteItem
+					initialColor={color}
+					submitColor={handleSetColor}
+					cancel={cancelEdit}
+				/>
+			);
+		}
+		return (
+			<PaletteItem
+				color={color}
+				rank={rank}
+				closeness={closeness}
+				setCloseness={setCloseness}
+				closenessIndex={index}
+				setIsEditing={setIsEditing}
+			/>
+		);
+	}
+);
+
+type NewPaletteItemProps = {
+	addColor: (color: cssColor) => void;
+};
+
+function NewPaletteItem({ addColor }: NewPaletteItemProps) {
+	const [isEditing, setIsEditing] = useState(false);
+	const [savedInitialColor, saveInitialColor] = useState("#000000");
+
+	const startEdit = () => {
+		setIsEditing(true);
+	};
+	const cancelEdit = () => {
+		setIsEditing(false);
+	};
+	const handleAddColor = (color: cssColor) => {
+		setIsEditing(false);
+		saveInitialColor(color);
+		addColor(color);
+	};
+
+	return (
+		<div className="new-palette-item">
+			{isEditing ? (
+				<EditPaletteItem
+					initialColor={savedInitialColor}
+					submitColor={handleAddColor}
+					cancel={cancelEdit}
+				/>
+			) : (
+				<button onClick={startEdit}>Add Color</button>
+			)}
+		</div>
+	);
+}
+
+export { PaletteItemWrapper as PaletteItem, PaletteItemHeader, NewPaletteItem };
+export default PaletteItemWrapper;
