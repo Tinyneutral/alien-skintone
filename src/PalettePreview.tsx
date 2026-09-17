@@ -1,5 +1,5 @@
-import type { Colors } from "./palette.ts";
-import "./PalettePreview.css";
+import type { Colors } from "/palette.ts";
+import "/PalettePreview.css";
 
 type PalettePreviewProps = {
 	colors6: Colors;

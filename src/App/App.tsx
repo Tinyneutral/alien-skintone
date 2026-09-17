@@ -1,10 +1,10 @@
-import useSlots from "../slots/useSlots.ts";
-import { Tab, NewTab } from "../slots/Tab.tsx";
+import useSlots from "/features/useSlots.ts";
+import { Tab, NewTab } from "/Tab.tsx";
 import PalettePreview from "../PalettePreview.tsx";
-import Palette from "../Palette.tsx";
-import type { Colors } from "../palette.ts";
+import Palette from "/palette.tsx";
+import type { Colors } from "/palette.ts";
 
-import "./App.css";
+import "/app/App.css";
 
 function App() {
 	return (

@@ -1,8 +1,8 @@
 // import { useState } from "react";
-import "./PaletteItemTest.css";
-import PaletteItem from "./PaletteItem.jsx";
 import Color from "colorjs.io";
-import { toWeighted } from "./closest.ts";
+import PaletteItem from "/PaletteItem.js";
+import { toWeighted } from "/closest.js";
+import "/PaletteItemTest.css";
 
 function randomColor(): cssColor {
 	const byte = () =>

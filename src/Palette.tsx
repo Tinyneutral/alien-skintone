@@ -1,9 +1,12 @@
-import { useCallback, useState } from "react";
+import { useCallback, useState, type SetStateAction } from "react";
 
-import type { Colors } from "./palette.ts";
-import PaletteItem, { PaletteItemHeader } from "./PaletteItem.tsx";
+import type { Colors } from "/palette.ts";
+import PaletteItemWrapper, {
+	NewPaletteItem,
+	PaletteItemHeader,
+} from "/PaletteItem.tsx";
 
-import "./Palette.css";
+import "/Palette.css";
 
 type PaletteProps = {
 	colors: Colors;

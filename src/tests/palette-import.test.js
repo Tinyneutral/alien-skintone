@@ -1,8 +1,8 @@
 import { expect, test } from "vitest";
-import { extractPalette } from "../palette-import.js";
+import { extractPalette } from "/palette-import.js";
 
 // TODO: add jpeg/bmp/webpq support
-const images = import.meta.glob("./palette-import/*.png", {
+const images = import.meta.glob("/tests/palette-import/*.png", {
 	query: "?url",
 	import: "default",
 	eager: true,
@@ -31,7 +31,7 @@ async function loadFile(path) {
 test.for([
 	{
 		name: "3 colors (small)",
-		path: "./palette-import/3.png",
+		path: "/tests/palette-import/3.png",
 		expected: [
 			{ r: 255, g: 0, b: 0 },
 			{ r: 0, g: 255, b: 0 },
@@ -40,7 +40,7 @@ test.for([
 	},
 	{
 		name: "21 colors",
-		path: "./palette-import/21.png",
+		path: "/tests/palette-import/21.png",
 		expected: [
 			{ r: 6, g: 4, b: 4 },
 			{ r: 26, g: 26, b: 23 },
@@ -74,7 +74,7 @@ test.for([
 test.for([
 	{
 		name: "3 colors (small)",
-		path: "./palette-import/3-outlined.png",
+		path: "/tests/palette-import/3-outlined.png",
 		expected: [
 			{ r: 255, g: 0, b: 0 },
 			{ r: 0, g: 255, b: 0 },
@@ -83,7 +83,7 @@ test.for([
 	},
 	{
 		name: "21 colors (outline uses a palette color)",
-		path: "./palette-import/21-outlined.png",
+		path: "/tests/palette-import/21-outlined.png",
 		expected: [
 			{ r: 6, g: 4, b: 4 },
 			{ r: 26, g: 26, b: 23 },

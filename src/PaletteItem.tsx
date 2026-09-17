@@ -1,6 +1,6 @@
 import Color from "colorjs.io";
 import { useEffect, useMemo, memo } from "react";
-import { useAppSelector } from "./app/hooks.ts";
+import { useAppDispatch, useAppSelector } from "/app/hooks.ts";
 import { toWeighted, deltaE } from "./closest.ts";
 import "./PaletteItem.css";
 
