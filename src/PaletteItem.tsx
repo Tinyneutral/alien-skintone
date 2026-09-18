@@ -125,13 +125,11 @@ function EditPaletteItem({
 		return { backgroundColor: color };
 	};
 	return (
-		<div className="edit-palette-item-container">
 		<div className="edit-palette-item">
 			<div className="preview">
 				<div className="now" style={bg(color.display())}></div>
 				<div className="prev" style={bg(initialColor)}></div>
 			</div>
-			<div className="not-preview">
 			<div className="coords">
 				{Object.entries(color.space.coords).map(([name, coord], index) => (
 					<label className="coord" key={name}>
@@ -146,34 +144,30 @@ function EditPaletteItem({
 						/>
 					</label>
 				))}
-				</div>
-				<div className="not-coords">
-				<div className="not-space">
-					<button className="submit" onClick={handleSubmit}>
-						Submit
-					</button>
-					<button className="cancel" onClick={cancel}>
-						Cancel
-					</button>
-					{!color.inGamut() && (
-						<div className="out-of-gamut">
-							<img src={outOfGamutUrl} alt="Out of gamut" />
-						</div>
-					)}
-				</div>
-				<select
-					className="space"
-					value={color.space.id}
-					onChange={(e) => setSpace(e.target.value)}>
-					{Object.entries(Color.spaces).map(([name, { id }]) => (
-						<option key={name} value={id}>
-							{name}
-						</option>
-					))}
-				</select>
-				</div>
 			</div>
-		</div>
+			<div className="actions-and-warning">
+				<button className="submit" onClick={handleSubmit}>
+					Submit
+				</button>
+				<button className="cancel" onClick={cancel}>
+					Cancel
+				</button>
+				{!color.inGamut() && (
+					<div className="out-of-gamut">
+						<img src={outOfGamutUrl} alt="Out of gamut" />
+					</div>
+				)}
+			</div>
+			<select
+				className="space"
+				value={color.space.id}
+				onChange={(e) => setSpace(e.target.value)}>
+				{Object.entries(Color.spaces).map(([name, { id }]) => (
+					<option key={name} value={id}>
+						{name}
+					</option>
+				))}
+			</select>
 		</div>
 	);
 }
