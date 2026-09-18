@@ -42,9 +42,9 @@
 
 	--white: #FFFFFF;
 	--blue: #76B9E8;
-	--yellow: #ECC800;
-	--green: #86C23C;
-	--red: #FA793A;
+	--yellow: #E9CA00;
+	--green: #52BF56;
+	--red: #F06455;
 
 	--primary: var(--brown-100);
 	--primary-dull: var(--brown-200);
@@ -55,7 +55,9 @@
 	--secondary-bright: var(--brown-600);
 	--secondary: var(--brown-700);
 	--secondary-dull: var(--brown-800);
-	--accent: var(--green);
+	--accent: var(--deep-green);
+
+	--delete: var(--red);
 
 	--text: var(--primary);
 
