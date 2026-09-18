@@ -35,9 +35,8 @@ function Tab<T>({
 		<div className={isActive ? "tab active" : "tab"} onClick={handleSelect}>
 			<div className="head">
 				<p>{label}</p>
-				{/* TODO: change to a normal cross button */}
-				<button className="close-button" onClick={handleClose}>
-					Close
+				<button className="close" onClick={handleClose}>
+					<span className="icon">delete</span>
 				</button>
 			</div>
 			{children}

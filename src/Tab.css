@@ -3,6 +3,18 @@
     align-items: end;
     overflow-x: auto;
     gap: 4px;
+    scrollbar-gutter: stable;
+    scrollbar-width: thin;
+    scroll-snap-align: start;
+    scroll-snap-type: x proximity;
+}
+.tabs,
+.tab,
+.new-tab {
+    transform:rotateX(180deg);
+    -moz-transform:rotateX(180deg); /* Mozilla */
+    -webkit-transform:rotateX(180deg); /* Safari and Chrome */
+    -o-transform:rotateX(180deg); /* Opera */
 }
 
 .tab:not(.active) {
@@ -11,11 +23,23 @@
     p {
         color: var(--secondary-bright);
     }
+    .head button.close {
+            background-color: var(--primary-duller);
+    }
+    .head button.close .icon {
+                color: var(--secondary);
+    }
 }
 .tab.active {
     background-color: var(--primary);
     p {
         color: var(--secondary-brighter);
+    }
+    .head button.close {
+            background-color: var(--primary-dull);
+    }
+    .head button.close .icon {
+                color: var(--secondary);
     }
 }
 .new-tab {
@@ -46,34 +70,33 @@
         padding: 0;
 }
 .tab {
-    display: inline-flex;
-    flex-flow: column nowrap;
+    display: flex;
+    flex-direction: column;
     align-items: center;
     cursor: pointer;
     width: calc(var(--preview-width) + var(--border) * 2);
     height: calc(var(--preview-height) + var(--head-height));
-    padding: 0 var(--border) 0;
 }
 .tab .head {
+        width: 100%;
+        height: var(--head-height);
         display: flex;
         justify-content: space-between;
         align-items: start;
-        align-self: stretch;
-        height: var(--head-height);
-        line-height: var(--head-height);
-        padding: 0 calc(var(--border) + 0.1rem);
-        font-size: 0.75rem;
 }
 .tab .head p {
+            padding-left: 0.2rem;
+            line-height: var(--head-height);
+            font-size: 0.75rem;
             font-weight: 600;
 }
-.tab .head .close-button {
-            padding: 0.05rem 0 0;
-            line-height: 0.6rem;
-            font-size: 0.6rem;
-            color: var(--accent);
-            text-decoration: underline;
-            cursor: pointer;
-            background: none;
-            border: none;
+.tab .head button.close {
+            width: 1rem;
+            height: calc(0.8rem - var(--border));
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+.tab .head button.close .icon {
+                font-size: 0.6rem;
 }
