@@ -1,10 +1,10 @@
 import { useCallback, type SetStateAction } from "react";
 
-import { type PaletteData, INITIAL_CLOSENESS } from "/palette.ts";
+import { type PaletteData, INITIAL_CLOSENESS } from "./palette.ts";
 import PaletteItem, {
 	NewPaletteItem,
 	PaletteItemHeader,
-} from "/PaletteItem.tsx";
+} from "./PaletteItem.tsx";
 
 import "/Palette.css";
 

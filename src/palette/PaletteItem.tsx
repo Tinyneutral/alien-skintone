@@ -7,7 +7,7 @@ import { toWeighted, deltaE } from "./closeness.ts";
 import { copyCssColorToClipboard } from "/feature-select.ts";
 import outOfGamutUrl from "/assets/svg/out-of-gamut.svg";
 
-import "/PaletteItem.css";
+import "./PaletteItem.css";
 
 type PaletteItemProps = {
 	color: cssColor;

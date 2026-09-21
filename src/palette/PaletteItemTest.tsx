@@ -1,7 +1,7 @@
 // import { useState } from "react";
 import Color from "colorjs.io";
-import PaletteItem from "/PaletteItem.js";
-import { toWeighted } from "/closeness.js";
+import PaletteItem from "./PaletteItem.js";
+import { toWeighted } from "./closeness.js";
 import "/PaletteItemTest.css";
 
 function randomColor(): cssColor {

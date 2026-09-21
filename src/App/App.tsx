@@ -1,8 +1,8 @@
 import useSlots from "/features/useSlots.ts";
 import { Tab, NewTab } from "/Tab.tsx";
-import PalettePreview from "/PalettePreview.tsx";
-import Palette from "/Palette.tsx";
-import { initialPalette, type PaletteData } from "/palette.ts";
+import PalettePreview from "/palette/PalettePreview";
+import Palette from "/palette/Palette.tsx";
+import { initialPalette, type PaletteData } from "/palette/palette.ts";
 
 import "./App.css";
 
