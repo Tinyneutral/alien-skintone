@@ -57,8 +57,10 @@
 	--secondary-dull: var(--brown-800);
 	--accent: var(--deep-green);
 
+	--add: var(--blue);
 	--delete: var(--red);
-
+	--edit: var(--yellow);
+	--copy: var(--green);
 	--text: var(--primary);
 
 	--sans: "Atkinson Hyperlegible Next", Verdana;

@@ -47,7 +47,7 @@ function reducer<T>(state: SlotState<T>, action: EveryAction<T>): SlotState<T> {
 				),
 				activeIndex:
 					action.index <= state.activeIndex
-						? state.activeIndex - 1
+						? Math.max(0, state.activeIndex - 1)
 						: state.activeIndex,
 			};
 		case "selected-slot":
