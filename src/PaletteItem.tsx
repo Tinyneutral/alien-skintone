@@ -3,7 +3,7 @@ import { useState, useEffect, useRef, useMemo, memo } from "react";
 
 import { useAppDispatch, useAppSelector } from "/app/hooks.ts";
 import { setDefaultEditSpace } from "/features/defaultEditSpace.ts";
-import { toWeighted, deltaE } from "./closest.ts";
+import { toWeighted, deltaE } from "./closeness.ts";
 import { copyCssColorToClipboard } from "/feature-select.ts";
 import outOfGamutUrl from "/assets/svg/out-of-gamut.svg";
 
