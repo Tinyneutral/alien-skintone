@@ -1,8 +1,7 @@
-import type { Colors } from "/palette.ts";
-import "/PalettePreview.css";
+import "./PalettePreview.css";
 
 type PalettePreviewProps = {
-	colors6: Colors;
+	colors6: cssColor[];
 	isActive: boolean;
 };
 

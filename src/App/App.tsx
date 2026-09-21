@@ -1,10 +1,10 @@
 import useSlots from "/features/useSlots.ts";
 import { Tab, NewTab } from "/Tab.tsx";
-import PalettePreview from "../PalettePreview.tsx";
-import Palette from "/palette.tsx";
-import type { Colors } from "/palette.ts";
+import PalettePreview from "/PalettePreview.tsx";
+import Palette from "/Palette.tsx";
+import { initialPalette, type PaletteData } from "/palette.ts";
 
-import "/app/App.css";
+import "./App.css";
 
 function App() {
 	return (
@@ -19,33 +19,35 @@ function PaletteWithTabs() {
 		init,
 		state,
 		dispatch,
-		content: colors,
-		setContent: setColors,
-	} = useSlots<Colors>([]);
+		content: paletteData,
+		setContent: setPaletteData,
+	} = useSlots<PaletteData>(initialPalette);
 
 	return (
 		<section className="palettes">
 			<h2>Palettes</h2>
 			<div className="tabs">
-				{state.contents.map((colors: Colors, index: number) => (
-					<Tab<Colors>
+				{state.contents.map((content: PaletteData, index: number) => (
+					<Tab<PaletteData>
 						key={index}
 						index={index}
 						isActive={index === state.activeIndex}
-						label={`${colors.length}`}
-						dispatch={dispatch}
-						init={init}>
+						label={`${content.colors.length}`}
+						init={init}
+						dispatch={dispatch}>
 						<PalettePreview
-							colors6={colors.slice(0, 6)}
+							colors6={content.colors.slice(0, 6)}
 							isActive={index === state.activeIndex}
 						/>
 					</Tab>
 				))}
-				<NewTab<Colors> init={init} dispatch={dispatch}>
+				<NewTab<PaletteData> init={init} dispatch={dispatch} text="New Palette">
 					<PalettePreview colors6={[]} isActive={false} />
 				</NewTab>
 			</div>
-			{colors && <Palette colors={colors} setColors={setColors} />}
+			{paletteData && (
+				<Palette content={paletteData} setPaletteData={setPaletteData} />
+			)}
 		</section>
 	);
 }

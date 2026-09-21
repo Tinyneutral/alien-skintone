@@ -1,5 +1,5 @@
 import Color from "colorjs.io";
-import { useState, useEffect, useMemo, memo } from "react";
+import { useState, useEffect, useRef, useMemo, memo } from "react";
 
 import { useAppDispatch, useAppSelector } from "/app/hooks.ts";
 import { setDefaultEditSpace } from "/features/defaultEditSpace.ts";
@@ -13,9 +13,9 @@ type PaletteItemProps = {
 	color: cssColor;
 	rank: number | "-";
 	closeness: number;
-	setCloseness: (closeness: number, index: number) => void;
-	closenessIndex: number;
+	setCloseness: (closeness: number) => void;
 	setIsEditing: (isEditing: boolean) => void;
+	deleteSelf: () => void;
 };
 
 const PaletteItem = memo(
@@ -24,8 +24,8 @@ const PaletteItem = memo(
 		rank,
 		closeness,
 		setCloseness,
-		closenessIndex,
 		setIsEditing,
+		deleteSelf,
 	}: PaletteItemProps) => {
 		const pickedColor = useAppSelector((state) => state.pickedColor);
 		const featureSpace = Color.spaces.oklab; // TODO: redux
@@ -45,9 +45,9 @@ const PaletteItem = memo(
 		);
 		useEffect(() => {
 			if (newCloseness !== closeness) {
-				setCloseness(newCloseness, closenessIndex);
+				setCloseness(newCloseness);
 			}
-		}, [color, closeness, newCloseness, closenessIndex, setCloseness]);
+		}, [color, closeness, newCloseness, setCloseness]);
 
 		const handleEdit = () => {
 			setIsEditing(true);
@@ -113,6 +113,13 @@ function EditPaletteItem({
 	console.log(color.space.coords);
 	console.log(color.coords);
 
+	const firstCoordRef = useRef<HTMLInputElement>(null);
+	useEffect(() => {
+		if (firstCoordRef.current) {
+			firstCoordRef.current.focus();
+		}
+	}, []);
+
 	const setCoord = (coordName: string, value: number) => {
 		setColor((prev) => new Color(prev).set(coordName, value));
 	};
@@ -144,6 +151,7 @@ function EditPaletteItem({
 							step={(rangeWidthDigit(coord.refRange) ?? 1) / 100}
 							value={no0atEnd(color.coords[index]?.toPrecision(5)) ?? 0}
 							onChange={(e) => setCoord(name, parseFloat(e.target.value))}
+							ref={index === 0 ? firstCoordRef : null}
 						/>
 					</label>
 				))}
@@ -208,8 +216,9 @@ type PaletteItemWrapperProps = {
 	color: cssColor;
 	rank: number | "-";
 	closeness: number;
-	setColor: (color: cssColor, index: number) => void;
 	setCloseness: (closeness: number, index: number) => void;
+	setColor: (color: cssColor, index: number) => void;
+	removeColor: (index: number) => void;
 };
 
 const PaletteItemWrapper = memo(
@@ -220,14 +229,21 @@ const PaletteItemWrapper = memo(
 		closeness,
 		setColor,
 		setCloseness,
+		removeColor,
 	}: PaletteItemWrapperProps) => {
 		const [isEditing, setIsEditing] = useState(false);
 		const handleSetColor = (color: cssColor) => {
 			setIsEditing(false);
 			setColor(color, index);
 		};
+		const handleSetCloseness = (closeness: number) => {
+			setCloseness(closeness, index);
+		};
 		const cancelEdit = () => {
 			setIsEditing(false);
+		};
+		const deleteSelf = () => {
+			removeColor(index);
 		};
 
 		if (isEditing) {
@@ -244,9 +260,9 @@ const PaletteItemWrapper = memo(
 				color={color}
 				rank={rank}
 				closeness={closeness}
-				setCloseness={setCloseness}
-				closenessIndex={index}
+				setCloseness={handleSetCloseness}
 				setIsEditing={setIsEditing}
+				deleteSelf={deleteSelf}
 			/>
 		);
 	}

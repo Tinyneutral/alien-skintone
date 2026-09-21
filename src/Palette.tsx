@@ -1,6 +1,6 @@
-import { useCallback, useState, type SetStateAction } from "react";
+import { useCallback, type SetStateAction } from "react";
 
-import type { Colors } from "/palette.ts";
+import { type PaletteData, INITIAL_CLOSENESS } from "/palette.ts";
 import PaletteItem, {
 	NewPaletteItem,
 	PaletteItemHeader,
@@ -9,39 +9,44 @@ import PaletteItem, {
 import "/Palette.css";
 
 type PaletteProps = {
-	colors: Colors;
-	setColors: (colors: SetStateAction<Colors>) => void;
+	content: {
+		colors: cssColor[];
+		closenesses: number[];
+	};
+	setPaletteData: (paletteData: SetStateAction<PaletteData>) => void;
 };
 
-function Palette({ colors, setColors }: PaletteProps) {
-	const [closenesses, setClosenesses] = useState<number[]>(
-		Array(colors.length).fill(Number.POSITIVE_INFINITY)
-	);
-	const setCloseness = useCallback((closeness: number, index: number) => {
-		setClosenesses((prev) => {
-			if (index >= prev.length) {
-				const pad = Array(index - prev.length + 1).fill(
-					Number.POSITIVE_INFINITY
-				);
-				return [...prev, ...pad, closeness];
-			}
-			return prev.with(index, closeness);
-		});
-	}, []);
+function Palette({ content: { colors, closenesses }, setPaletteData }: PaletteProps) {
+	const setColors = useCallback((colors: SetStateAction<cssColor[]>) => {
+		if (typeof colors === "function") {
+			setPaletteData((prev) => ({ ...prev, colors: colors(prev.colors) }));
+		} else {
+			setPaletteData((prev) => ({ ...prev, colors }));
+		}
+	}, [setPaletteData]);
+	const setClosenesses = useCallback((closenesses: SetStateAction<number[]>) => {
+		if (typeof closenesses === "function") {
+			setPaletteData((prev) => ({ ...prev, closenesses: closenesses(prev.closenesses) }));
+		} else {
+			setPaletteData((prev) => ({ ...prev, closenesses }));
+		}
+	}, [setPaletteData]);
 	const ranks = getRanks(closenesses);
 
 	const addColor = (color: cssColor) => {
-		setColors((prev) => [...prev, color]);
-		setClosenesses((prev) => [...prev, Number.POSITIVE_INFINITY]);
+		setColors((prev) => prev.concat(color));
+		setClosenesses((prev) => prev.concat(INITIAL_CLOSENESS));
 	};
 	const removeColor = (index: number) => {
 		setColors((prev) => prev.filter((_, i) => i !== index));
 		setClosenesses((prev) => prev.filter((_, i) => i !== index));
 	};
 	const setColor = (color: cssColor, index: number) => {
-		setColors((prev) =>
-			prev.map((prevColor, i) => (i === index ? color : prevColor))
-		);
+		setColors((prev) => prev.toSpliced(index, 1, color));
+		setClosenesses((prev) => prev.toSpliced(index, 1, INITIAL_CLOSENESS));
+	};
+	const setCloseness = (closeness: number, index: number) => {
+		setClosenesses((prev) => prev.toSpliced(index, 1, closeness));
 	};
 
 	const handleInit = () => {
