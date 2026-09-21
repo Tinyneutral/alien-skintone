@@ -1,35 +1,27 @@
-.palette-item .meta {
+.palette-item .rank {
 	--rank-great-text: #000;
-	--rank-great-link: var(--accent);
 	--rank-great-bg: #8ACC5A;
 	--rank-good-text: #000;
-	--rank-good-link: var(--accent);
 	--rank-good-bg: #F3CE62;
 	--rank-meh-text: #888;
-	--rank-meh-link: rgb(from var(--accent) r g b / 66%);
 	--rank-meh-bg: #ccc;
 	--rank-none-text: #888;
-	--rank-none-link: rgb(from var(--accent) r g b / 66%);
 	--rank-none-bg: #ccc;
 }
-.palette-item .meta.rank-great {
+.palette-item .rank.great {
 	--rank-text: var(--rank-great-text);
-	--rank-link: var(--rank-great-link);
 	--rank-bg: var(--rank-great-bg);
 }
-.palette-item .meta.rank-good {
+.palette-item .rank.good {
 	--rank-text: var(--rank-good-text);
-	--rank-link: var(--rank-good-link);
 	--rank-bg: var(--rank-good-bg);
 }
-.palette-item .meta.rank-meh {
+.palette-item .rank.meh {
 	--rank-text: var(--rank-meh-text);
-	--rank-link: var(--rank-meh-link);
 	--rank-bg: var(--rank-meh-bg);
 }
-.palette-item .meta.rank-none {
+.palette-item .rank.none {
 	--rank-text: var(--rank-none-text);
-	--rank-link: var(--rank-none-link);
 	--rank-bg: var(--rank-none-bg);
 }
 
@@ -39,6 +31,7 @@
 	height: 1.6rem;
 	display: flex;
 	align-items: stretch;
+	background-color: var(--white);
 }
 .palette-item .color {
 		flex: 1 0 0;
@@ -52,49 +45,83 @@
 .palette-item .feature-color .picked-color-overlay {
 			width: calc(100% / 3);
 }
-.palette-item .meta {
-	background-color: var(--rank-bg);
-	display: inline-flex;
-	align-items: stretch;
-}
-.palette-item .rank,
-.palette-item .edit-button,
-.palette-item .copy-button {
-		display: flex;
-		justify-content: end;
-		align-items: center;
-		text-align: right;
-}
 .palette-item .rank {
-		font-size: 1rem;
-		color: var(--rank-text);
-		font-variant-numeric: lining-nums proportional-nums;
-		width: 1.5rem;
-		padding-right: 0.2rem;
+	width: 2rem;
+	padding: 0 0.4rem 0;
+	display: flex;
+	align-items: center;
+	justify-content: end;
+	text-align: right;
+	font-size: 1rem;
+	font-variant-numeric: lining-nums proportional-nums;
+	background-color: var(--rank-bg);
+	color: var(--rank-text);
 }
-.palette-item .edit-button,
-.palette-item .copy-button {
-		font-size: 0.8rem;
-		color: var(--rank-link);
-		text-decoration: underline;
-		width: 2rem;
-		background: none;
+.palette-item .buttons {
+		display: flex;
+		align-items: center;
+		justify-content: end;
+		padding: 0 0.2rem 0;
+		border-top: 0.5px solid var(--primary-dull);
+		border-bottom: 0.5px solid var(--primary-dull);
 }
-.palette-item .edit-button:active,
-.palette-item .copy-button:active {
-		color: rgb(from var(--rank-link) r g b / calc(alpha * 0.2));
+.palette-item .buttons button {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			text-align: center;
+			width: 1.1rem;
+			height: 1.1rem;
+			color: var(--bg);
+}
+.palette-item .buttons button.edit {
+			background-color: var(--edit);
+}
+.palette-item .buttons button.copy {
+			background-color: var(--copy);
+}
+.palette-item .buttons button.delete {
+			background-color: var(--delete);
+}
+.palette-item .buttons button .icon {
+				font-size: 0.8rem;
 }
 
 .palette-item.header {
 	height: 2rem;
-	color: var(--bg-dull);
-	background-color: white;
-	padding-top: 0.4rem;
-	line-height: 1.6rem;
+	align-items: end;
 	border-bottom: 1px solid var(--bg);
 }
+.palette-item.header p {
+	height: 1rem;
+	line-height: 0.8rem;
+	font-size: 0.6rem;
+	padding: 0 0 0.2rem 0.2rem;
+	display: flex;
+	justify-content: start;
+	align-items: center;
+	color: var(--bg-dull);
+}
 .palette-item.header .meta {
-		width: calc(1.5rem + 2rem + 2rem);
+		width: calc(2rem + 3.7rem);
+}
+
+.palette-item.new {
+	align-items: center;
+	padding: 0.2rem 0 0.2rem 0.2rem;
+}
+.palette-item.new button {
+		height: 1.2rem;
+		padding: 0 0.2rem 0 0.1rem;
+		background-color: var(--add);
+		color: var(--bg);
+		display: flex;
+		align-items: center;
+		gap: 0.1rem;
+}
+.palette-item.new button p,
+.palette-item.new button .icon {
+			font-size: 0.8rem;
 }
 
 div:has(.edit-palette-item) {

@@ -58,13 +58,13 @@ const PaletteItem = memo(
 
 		const rankClass = useMemo(() => {
 			if (typeof rank !== "number") {
-				return "rank-none";
+				return "none";
 			} else if (rank <= 3) {
-				return "rank-great";
+				return "great";
 			} else if (rank <= 10) {
-				return "rank-good";
+				return "good";
 			} else {
-				return "rank-meh";
+				return "meh";
 			}
 		}, [rank]);
 		const bg = (color: cssColor): React.CSSProperties => {
@@ -78,13 +78,16 @@ const PaletteItem = memo(
 						style={bg(pickedFeatureColor)}></div>
 				</div>
 				<div className="color" style={bg(color)}></div>
-				<div className={`meta ${rankClass}`}>
-					<p className="rank">{rank}</p>
-					<button className="edit-button" onClick={handleEdit}>
-						Edit
+				<p className={`rank ${rankClass}`}>{rank}</p>
+				<div className="buttons">
+					<button className="edit" onClick={handleEdit}>
+						<span className="icon">edit</span>
 					</button>
-					<button className="copy-button" onClick={handleCopy}>
-						Copy
+					<button className="copy" onClick={handleCopy}>
+						<span className="icon">copy</span>
+					</button>
+					<button className="delete" onClick={deleteSelf}>
+						<span className="icon">delete</span>
 					</button>
 				</div>
 			</div>
@@ -269,19 +272,23 @@ function NewPaletteItem({ addColor }: NewPaletteItemProps) {
 		addColor(color);
 	};
 
-	return (
-		<div className="new-palette-item">
-			{isEditing ? (
-				<EditPaletteItem
-					initialColor={savedInitialColor}
-					submitColor={handleAddColor}
-					cancel={cancelEdit}
-				/>
-			) : (
-				<button onClick={startEdit}>Add Color</button>
-			)}
-		</div>
-	);
+	if (isEditing) {
+		return (
+			<EditPaletteItem
+				initialColor={savedInitialColor}
+				submitColor={handleAddColor}
+				cancel={cancelEdit}
+			/>
+		);
+	} else {
+		return (
+			<div className="palette-item new">
+				<button onClick={startEdit}>
+					<span className="icon">add</span> Add Color
+				</button>
+			</div>
+		);
+	}
 }
 
 export { PaletteItemWrapper as PaletteItem, PaletteItemHeader, NewPaletteItem };

@@ -44,20 +44,17 @@ function Palette({ colors, setColors }: PaletteProps) {
 		);
 	};
 
-	const [index, setIndex] = useState(0);
 	const handleInit = () => {
-		setColors([
-			"#ff0000",
-			"#008000",
-			"#0000ff",
-			"#ffff00",
-			"#800080",
-			"#ffa500",
-			"#a52a2a",
-			"#808080",
-			"#000000",
-			"#ffffff",
-		]);
+		addColor("#ff0000");
+		addColor("#008000");
+		addColor("#0000ff");
+		addColor("#ffff00");
+		addColor("#800080");
+		addColor("#ffa500");
+		addColor("#a52a2a");
+		addColor("#808080");
+		addColor("#000000");
+		addColor("#ffffff");
 	};
 
 	return (
@@ -72,22 +69,11 @@ function Palette({ colors, setColors }: PaletteProps) {
 					closeness={closenesses[i]}
 					setCloseness={setCloseness}
 					setColor={setColor}
+					removeColor={removeColor}
 				/>
 			))}
 			<NewPaletteItem addColor={addColor} />
 			<button onClick={handleInit}>Init Palette</button>
-			{colors.length > 0 && (
-				<>
-					<input
-						type="number"
-						value={index}
-						onChange={(e) => setIndex(parseInt(e.target.value))}
-					/>
-					<button onClick={() => removeColor(index)}>
-						Remove Color at Index
-					</button>
-				</>
-			)}
 		</div>
 	);
 }
