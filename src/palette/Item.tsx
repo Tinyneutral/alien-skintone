@@ -7,9 +7,9 @@ import { toWeighted, deltaE } from "./closeness.ts";
 import { copyCssColorToClipboard } from "/feature-select.ts";
 import outOfGamutUrl from "/assets/svg/out-of-gamut.svg";
 
-import "./PaletteItem.css";
+import "./Item.css";
 
-type PaletteItemProps = {
+type ItemProps = {
 	color: cssColor;
 	rank: number | "-";
 	closeness: number;
@@ -19,7 +19,7 @@ type PaletteItemProps = {
 	style?: React.CSSProperties;
 };
 
-const PaletteItem = memo(
+const Item = memo(
 	({
 		color,
 		rank,
@@ -28,7 +28,7 @@ const PaletteItem = memo(
 		setIsEditing,
 		deleteSelf,
 		style = {},
-	}: PaletteItemProps) => {
+	}: ItemProps) => {
 		const pickedColor = useAppSelector((state) => state.pickedColor);
 		const featureSpace = Color.spaces.oklab; // TODO: redux
 		const featureWeights: number[] = useMemo(() => [1, 0, 0], []); // TODO: redux
@@ -73,7 +73,7 @@ const PaletteItem = memo(
 			return { backgroundColor: color };
 		};
 		return (
-			<div className={`palette-item ${rankClass}`} style={style}>
+			<div className={`item ${rankClass}`} style={style}>
 				<div className="feature-color" style={bg(featureColor)}>
 					<div
 						className="picked-color-overlay"
@@ -97,19 +97,19 @@ const PaletteItem = memo(
 	}
 );
 
-type EditPaletteItemProps = {
+type EditItemProps = {
 	initialColor: cssColor;
 	submitColor: (color: cssColor) => void;
 	cancel: () => void;
 	style?: React.CSSProperties;
 };
 
-function EditPaletteItem({
+function EditItem({
 	initialColor,
 	submitColor,
 	cancel,
 	style = {},
-}: EditPaletteItemProps) {
+}: EditItemProps) {
 	const defaultSpace = useAppSelector((state) => state.defaultEditSpace);
 	const dispatch = useAppDispatch();
 	const [color, setColor] = useState(new Color(initialColor).to(defaultSpace));
@@ -139,8 +139,8 @@ function EditPaletteItem({
 		return { backgroundColor: color };
 	};
 	return (
-		<div className="edit-palette-item-container" style={style}>
-			<div className="edit-palette-item">
+		<div className="edit-item-container" style={style}>
+			<div className="edit-item">
 				<div className="preview">
 					<div className="now" style={bg(color.display())}></div>
 					<div className="prev" style={bg(initialColor)}></div>
@@ -205,26 +205,24 @@ function no0atEnd(value: string | undefined) {
 	return parseFloat(value);
 }
 
-type PaletteItemHeaderProps = {
+type ItemHeaderProps = {
 	style?: React.CSSProperties;
 	ref?: React.Ref<HTMLDivElement>;
 };
 
-const PaletteItemHeader = memo(
-	({ style = {}, ref }: PaletteItemHeaderProps) => {
-		return (
-			<div className="palette-item header" style={style} ref={ref}>
-				<div className="feature-color">
-					<div className="picked-color-overlay"></div>
-				</div>
-				<p className="color">Color</p>
-				<p className="meta">Rank</p>
+const ItemHeader = memo(({ style = {}, ref }: ItemHeaderProps) => {
+	return (
+		<div className="item header" style={style} ref={ref}>
+			<div className="feature-color">
+				<div className="picked-color-overlay"></div>
 			</div>
-		);
-	}
-);
+			<p className="color">Color</p>
+			<p className="meta">Rank</p>
+		</div>
+	);
+});
 
-type PaletteItemWrapperProps = {
+type ItemWrapperProps = {
 	index: number;
 	color: cssColor;
 	rank: number | "-";
@@ -235,7 +233,7 @@ type PaletteItemWrapperProps = {
 	style?: React.CSSProperties;
 };
 
-const PaletteItemWrapper = memo(
+const ItemWrapper = memo(
 	({
 		index,
 		color,
@@ -245,7 +243,7 @@ const PaletteItemWrapper = memo(
 		setCloseness,
 		removeColor,
 		style = {},
-	}: PaletteItemWrapperProps) => {
+	}: ItemWrapperProps) => {
 		const [isEditing, setIsEditing] = useState(false);
 		const handleSetColor = (color: cssColor) => {
 			setIsEditing(false);
@@ -263,7 +261,7 @@ const PaletteItemWrapper = memo(
 
 		if (isEditing) {
 			return (
-				<EditPaletteItem
+				<EditItem
 					initialColor={color}
 					submitColor={handleSetColor}
 					cancel={cancelEdit}
@@ -272,7 +270,7 @@ const PaletteItemWrapper = memo(
 			);
 		}
 		return (
-			<PaletteItem
+			<Item
 				color={color}
 				rank={rank}
 				closeness={closeness}
@@ -285,12 +283,12 @@ const PaletteItemWrapper = memo(
 	}
 );
 
-type NewPaletteItemProps = {
+type NewItemProps = {
 	addColor: (color: cssColor) => void;
 	style?: React.CSSProperties;
 };
 
-function NewPaletteItem({ addColor, style = {} }: NewPaletteItemProps) {
+function NewItem({ addColor, style = {} }: NewItemProps) {
 	const [isEditing, setIsEditing] = useState(false);
 	const [savedInitialColor, saveInitialColor] = useState("#000000");
 
@@ -308,7 +306,7 @@ function NewPaletteItem({ addColor, style = {} }: NewPaletteItemProps) {
 
 	if (isEditing) {
 		return (
-			<EditPaletteItem
+			<EditItem
 				initialColor={savedInitialColor}
 				submitColor={handleAddColor}
 				cancel={cancelEdit}
@@ -317,7 +315,7 @@ function NewPaletteItem({ addColor, style = {} }: NewPaletteItemProps) {
 		);
 	} else {
 		return (
-			<div className="palette-item new" style={style}>
+			<div className="item new" style={style}>
 				<button onClick={startEdit}>
 					<span className="icon">add</span> Add Color
 				</button>
@@ -326,5 +324,5 @@ function NewPaletteItem({ addColor, style = {} }: NewPaletteItemProps) {
 	}
 }
 
-export { PaletteItemWrapper as PaletteItem, PaletteItemHeader, NewPaletteItem };
-export default PaletteItemWrapper;
+export { ItemWrapper as Item, ItemHeader, NewItem };
+export default ItemWrapper;

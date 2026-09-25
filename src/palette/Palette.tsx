@@ -1,19 +1,9 @@
-import {
-	useState,
-	useMemo,
-	useCallback,
-	useLayoutEffect,
-	useRef,
-	type SetStateAction,
-} from "react";
+import { useCallback, useRef, type SetStateAction } from "react";
 import Color from "colorjs.io";
 
-import { type PaletteData, INITIAL_CLOSENESS } from "./palette.ts";
-import PaletteItem, {
-	NewPaletteItem,
-	PaletteItemHeader,
-} from "./PaletteItem.tsx";
+import ItemGrid from "./ItemGrid.tsx";
 
+import { type PaletteData, INITIAL_CLOSENESS } from "./palette.ts";
 import "./Palette.css";
 
 type PaletteProps = {
@@ -28,53 +18,7 @@ function Palette({
 	content: { colors, closenesses },
 	setPaletteData,
 }: PaletteProps) {
-	const [inputtedRows, setInputtedRowAmount] = useState(4);
-	const [possibleRows, setPossibleRowAmount] = useState(4);
 	const paletteRef = useRef<HTMLDivElement>(null);
-	const cellRef = useRef<HTMLDivElement>(null);
-	useLayoutEffect(() => {
-		if (!paletteRef.current) return;
-		let lastWidth = 0;
-		let timeoutId: ReturnType<typeof setTimeout>;
-
-		const observer = new ResizeObserver(([entry]) => {
-			if (!paletteRef.current || !cellRef.current) return;
-
-			const width = Math.round(entry.contentBoxSize[0].inlineSize);
-			if (width === lastWidth) {
-				return;
-			}
-			lastWidth = width;
-
-			observer.unobserve(paletteRef.current);
-			clearTimeout(timeoutId);
-			timeoutId = setTimeout(() => {
-				if (paletteRef.current) {
-					observer.observe(paletteRef.current);
-				}
-			}, 333);
-
-			const cellStyle = getComputedStyle(cellRef.current);
-			const cellWidthMin = parseFloat(cellStyle.minWidth);
-			const possibleNextRows = Math.max(Math.floor(width / cellWidthMin), 1);
-			if (possibleNextRows === possibleRows) return;
-			setPossibleRowAmount(possibleNextRows);
-		});
-		observer.observe(paletteRef.current);
-		return () => {
-			observer.disconnect();
-			if (timeoutId) {
-				clearTimeout(timeoutId);
-			}
-		};
-	}, [possibleRows]);
-
-	const rows = useMemo(
-		() => Math.min(inputtedRows, possibleRows),
-		[inputtedRows, possibleRows]
-	);
-	const [groupCols, setGroupCols] = useState(8);
-	console.log(rows);
 
 	const setColors = useCallback(
 		(colors: SetStateAction<cssColor[]>) => {
@@ -117,102 +61,25 @@ function Palette({
 		setClosenesses((prev) => prev.toSpliced(index, 1, closeness));
 	};
 
-	const groupItems = rows * groupCols;
-	const gridRow = (row: number) => {
-		const start = row * groupCols;
-		const trills = getTrills(start, groupCols, groupItems, colors.length - 1);
-		const isEndRow =
-			Math.floor((colors.length % groupItems) / groupCols) === row;
-		const style = { gridColumnStart: row + 1 };
-
-		return [
-			<PaletteItemHeader
-				key={`${row}-header`}
-				style={style}
-				ref={row === 0 ? cellRef : undefined}
-			/>,
-			...trills.map((trill) =>
-				trill.map((index) => (
-					<PaletteItem
-						key={`${row}-${index}`}
-						index={index}
-						color={colors[index]}
-						rank={ranks[index]}
-						closeness={closenesses[index]}
-						setCloseness={setCloseness}
-						setColor={setColor}
-						removeColor={removeColor}
-						style={style}
-					/>
-				))
-			),
-			...(isEndRow
-				? [
-						<NewPaletteItem
-							key={`${row}-new`}
-							addColor={addColor}
-							style={style}
-						/>,
-					]
-				: []),
-		];
-	};
-	const gridRows = Array.from({ length: rows }, (_, row) => gridRow(row));
-
 	const handleInit = () => {
 		initPalette(addColor);
 	};
 	const handleInit2 = () => {
 		initPalette2(addColor);
-	}
+	};
 
 	return (
-		<div
-			className="palette"
-			style={{ ["--rows"]: String(rows) } as React.CSSProperties}
-			ref={paletteRef}>
-			<div className="grid-config">
-				<label>
-					Rows:{" "}
-					<input
-						type="number"
-						value={inputtedRows}
-						min={1}
-						max={possibleRows}
-						step={1}
-						onChange={(e) => setInputtedRowAmount(parseInt(e.target.value))}
-					/>
-				</label>
-				<label>
-					Columns:{" "}
-					<input
-						type="number"
-						value={groupCols}
-						min={1}
-						max={99}
-						step={1}
-						onChange={(e) => setGroupCols(parseInt(e.target.value))}
-					/>{" "}
-					each
-				</label>
-			</div>
-			<div className="grid">
-				{gridRows.flatMap((row, rowIndex) =>
-					row.flatMap((item, i) => {
-						if (i % groupCols === 1) {
-							return [
-								<div
-									key={`${rowIndex}-divider-${i}`}
-									className="divider"
-									style={{ gridColumnStart: rowIndex + 1 }}
-								/>,
-								item,
-							];
-						}
-						return item;
-					})
-				)}
-			</div>
+		<div className="palette" ref={paletteRef}>
+			<ItemGrid
+				colors={colors}
+				closenesses={closenesses}
+				ranks={ranks}
+				addColor={addColor}
+				removeColor={removeColor}
+				setColor={setColor}
+				setCloseness={setCloseness}
+				paletteRef={paletteRef}
+			/>
 			<button onClick={handleInit}>Init Palette</button>
 			<button onClick={handleInit2}>Init Palette 2</button>
 		</div>
@@ -242,57 +109,37 @@ function getRanks(closenesses: number[]) {
 		.map((entry) => entry.rank);
 }
 
-function getTrills(
-	start: number,
-	length: number,
-	step: number,
-	max: number
-): number[][] {
-	const trills: number[][] = [];
-	for (let i = start; i <= max; i += step) {
-		const trill: number[] = [];
-		for (let j = i; j < i + length; j++) {
-			if (j > max) {
-				break;
-			}
-			trill.push(j);
-		}
-		trills.push(trill);
-	}
-	return trills;
-}
-
 function initPalette(addColor: (color: cssColor) => void) {
 	addColor("#ff0000");
-		addColor("#008000");
-		addColor("#0000ff");
-		addColor("#ffff00");
-		addColor("#800080");
-		addColor("#ffa500");
-		addColor("#a52a2a");
-		addColor("#808080");
-		addColor("#000000");
-		addColor("#ffffff");
-		addColor("#ff0000");
-		addColor("#008000");
-		addColor("#0000ff");
-		addColor("#ffff00");
-		addColor("#800080");
-		addColor("#ffa500");
-		addColor("#a52a2a");
-		addColor("#808080");
-		addColor("#000000");
-		addColor("#ffffff");
-		addColor("#ff0000");
-		addColor("#008000");
-		addColor("#0000ff");
-		addColor("#ffff00");
-		addColor("#800080");
-		addColor("#ffa500");
-		addColor("#a52a2a");
-		addColor("#808080");
-		addColor("#000000");
-		addColor("#ffffff");
+	addColor("#008000");
+	addColor("#0000ff");
+	addColor("#ffff00");
+	addColor("#800080");
+	addColor("#ffa500");
+	addColor("#a52a2a");
+	addColor("#808080");
+	addColor("#000000");
+	addColor("#ffffff");
+	addColor("#ff0000");
+	addColor("#008000");
+	addColor("#0000ff");
+	addColor("#ffff00");
+	addColor("#800080");
+	addColor("#ffa500");
+	addColor("#a52a2a");
+	addColor("#808080");
+	addColor("#000000");
+	addColor("#ffffff");
+	addColor("#ff0000");
+	addColor("#008000");
+	addColor("#0000ff");
+	addColor("#ffff00");
+	addColor("#800080");
+	addColor("#ffa500");
+	addColor("#a52a2a");
+	addColor("#808080");
+	addColor("#000000");
+	addColor("#ffffff");
 }
 
 function initPalette2(addColor: (color: cssColor) => void) {

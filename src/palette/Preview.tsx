@@ -1,11 +1,11 @@
-import "./PalettePreview.css";
+import "./Preview.css";
 
-type PalettePreviewProps = {
+type PreviewProps = {
 	colors6: cssColor[];
 	isActive: boolean;
 };
 
-function PalettePreview({ colors6, isActive }: PalettePreviewProps) {
+function Preview({ colors6, isActive }: PreviewProps) {
 	if (colors6.length > 6) {
 		throw new Error("colors6 must be at most 6 colors");
 	}
@@ -18,4 +18,4 @@ function PalettePreview({ colors6, isActive }: PalettePreviewProps) {
 	);
 }
 
-export default PalettePreview;
+export default Preview;
