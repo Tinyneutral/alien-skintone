@@ -1,7 +1,7 @@
 import { useCallback, useRef, type SetStateAction } from "react";
 import Color from "colorjs.io";
 
-import ItemGrid from "./ItemGrid.tsx";
+import ItemGrid from "./ItemGrid";
 
 import { type PaletteData, INITIAL_CLOSENESS } from "./palette.ts";
 import "./Palette.css";

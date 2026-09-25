@@ -1,12 +1,12 @@
 import Color from "colorjs.io";
 import { useState, useEffect, useRef, useMemo, memo } from "react";
 
-import { useAppDispatch, useAppSelector } from "/app/hooks.ts";
-import { setDefaultEditSpace } from "/features/defaultEditSpace.ts";
-import { toWeighted, deltaE } from "./closeness.ts";
-import { copyCssColorToClipboard } from "/feature-select.ts";
+import { useAppDispatch, useAppSelector } from "/app/hooks";
 import outOfGamutUrl from "/assets/svg/out-of-gamut.svg";
+import { setDefaultEditSpace } from "/features/defaultEditSpace";
+import { copyCssColorToClipboard } from "/feature-select";
 
+import { toWeighted, deltaE } from "./closeness";
 import "./Item.css";
 
 type ItemProps = {
