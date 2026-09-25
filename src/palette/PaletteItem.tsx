@@ -16,6 +16,7 @@ type PaletteItemProps = {
 	setCloseness: (closeness: number) => void;
 	setIsEditing: (isEditing: boolean) => void;
 	deleteSelf: () => void;
+	style?: React.CSSProperties;
 };
 
 const PaletteItem = memo(
@@ -26,6 +27,7 @@ const PaletteItem = memo(
 		setCloseness,
 		setIsEditing,
 		deleteSelf,
+		style = {},
 	}: PaletteItemProps) => {
 		const pickedColor = useAppSelector((state) => state.pickedColor);
 		const featureSpace = Color.spaces.oklab; // TODO: redux
@@ -58,20 +60,20 @@ const PaletteItem = memo(
 
 		const rankClass = useMemo(() => {
 			if (typeof rank !== "number") {
-				return "none";
+				return "rank-none";
 			} else if (rank <= 3) {
-				return "great";
+				return "rank-great";
 			} else if (rank <= 10) {
-				return "good";
+				return "rank-good";
 			} else {
-				return "meh";
+				return "rank-meh";
 			}
 		}, [rank]);
 		const bg = (color: cssColor): React.CSSProperties => {
 			return { backgroundColor: color };
 		};
 		return (
-			<div className="palette-item">
+			<div className={`palette-item ${rankClass}`} style={style}>
 				<div className="feature-color" style={bg(featureColor)}>
 					<div
 						className="picked-color-overlay"
@@ -79,7 +81,7 @@ const PaletteItem = memo(
 				</div>
 				<div className="color" style={bg(color)}></div>
 				<p className={`rank ${rankClass}`}>{rank}</p>
-				<div className="buttons">
+				<div className={`buttons ${rankClass}`}>
 					<button className="edit" onClick={handleEdit}>
 						<span className="icon">edit</span>
 					</button>
@@ -99,12 +101,14 @@ type EditPaletteItemProps = {
 	initialColor: cssColor;
 	submitColor: (color: cssColor) => void;
 	cancel: () => void;
+	style?: React.CSSProperties;
 };
 
 function EditPaletteItem({
 	initialColor,
 	submitColor,
 	cancel,
+	style = {},
 }: EditPaletteItemProps) {
 	const defaultSpace = useAppSelector((state) => state.defaultEditSpace);
 	const dispatch = useAppDispatch();
@@ -135,50 +139,52 @@ function EditPaletteItem({
 		return { backgroundColor: color };
 	};
 	return (
-		<div className="edit-palette-item">
-			<div className="preview">
-				<div className="now" style={bg(color.display())}></div>
-				<div className="prev" style={bg(initialColor)}></div>
+		<div className="edit-palette-item-container" style={style}>
+			<div className="edit-palette-item">
+				<div className="preview">
+					<div className="now" style={bg(color.display())}></div>
+					<div className="prev" style={bg(initialColor)}></div>
+				</div>
+				<div className="coords">
+					{Object.entries(color.space.coords).map(([name, coord], index) => (
+						<label className="coord" key={name}>
+							<span className="label">{name.toUpperCase()}</span>
+							<input
+								type="number"
+								min={coord.refRange?.[0] ?? 0}
+								max={coord.refRange?.[1] ?? 1}
+								step={(rangeWidthDigit(coord.refRange) ?? 1) / 100}
+								value={no0atEnd(color.coords[index]?.toPrecision(5)) ?? 0}
+								onChange={(e) => setCoord(name, parseFloat(e.target.value))}
+								ref={index === 0 ? firstCoordRef : null}
+							/>
+						</label>
+					))}
+				</div>
+				<div className="actions-and-warning">
+					<button className="submit" onClick={handleSubmit}>
+						Submit
+					</button>
+					<button className="cancel" onClick={cancel}>
+						Cancel
+					</button>
+					{!color.inGamut() && (
+						<div className="out-of-gamut">
+							<img src={outOfGamutUrl} alt="Out of gamut" />
+						</div>
+					)}
+				</div>
+				<select
+					className="space"
+					value={color.space.id}
+					onChange={(e) => setSpace(e.target.value)}>
+					{Object.entries(Color.spaces).map(([name, { id }]) => (
+						<option key={name} value={id}>
+							{name}
+						</option>
+					))}
+				</select>
 			</div>
-			<div className="coords">
-				{Object.entries(color.space.coords).map(([name, coord], index) => (
-					<label className="coord" key={name}>
-						<span className="label">{name.toUpperCase()}</span>
-						<input
-							type="number"
-							min={coord.refRange?.[0] ?? 0}
-							max={coord.refRange?.[1] ?? 1}
-							step={(rangeWidthDigit(coord.refRange) ?? 1) / 100}
-							value={no0atEnd(color.coords[index]?.toPrecision(5)) ?? 0}
-							onChange={(e) => setCoord(name, parseFloat(e.target.value))}
-							ref={index === 0 ? firstCoordRef : null}
-						/>
-					</label>
-				))}
-			</div>
-			<div className="actions-and-warning">
-				<button className="submit" onClick={handleSubmit}>
-					Submit
-				</button>
-				<button className="cancel" onClick={cancel}>
-					Cancel
-				</button>
-				{!color.inGamut() && (
-					<div className="out-of-gamut">
-						<img src={outOfGamutUrl} alt="Out of gamut" />
-					</div>
-				)}
-			</div>
-			<select
-				className="space"
-				value={color.space.id}
-				onChange={(e) => setSpace(e.target.value)}>
-				{Object.entries(Color.spaces).map(([name, { id }]) => (
-					<option key={name} value={id}>
-						{name}
-					</option>
-				))}
-			</select>
 		</div>
 	);
 }
@@ -199,17 +205,24 @@ function no0atEnd(value: string | undefined) {
 	return parseFloat(value);
 }
 
-const PaletteItemHeader = memo(() => {
-	return (
-		<div className="palette-item header">
-			<div className="feature-color">
-				<div className="picked-color-overlay"></div>
+type PaletteItemHeaderProps = {
+	style?: React.CSSProperties;
+	ref?: React.Ref<HTMLDivElement>;
+};
+
+const PaletteItemHeader = memo(
+	({ style = {}, ref }: PaletteItemHeaderProps) => {
+		return (
+			<div className="palette-item header" style={style} ref={ref}>
+				<div className="feature-color">
+					<div className="picked-color-overlay"></div>
+				</div>
+				<p className="color">Color</p>
+				<p className="meta">Rank</p>
 			</div>
-			<p className="color">Color</p>
-			<p className="meta">Rank</p>
-		</div>
-	);
-});
+		);
+	}
+);
 
 type PaletteItemWrapperProps = {
 	index: number;
@@ -219,6 +232,7 @@ type PaletteItemWrapperProps = {
 	setCloseness: (closeness: number, index: number) => void;
 	setColor: (color: cssColor, index: number) => void;
 	removeColor: (index: number) => void;
+	style?: React.CSSProperties;
 };
 
 const PaletteItemWrapper = memo(
@@ -230,6 +244,7 @@ const PaletteItemWrapper = memo(
 		setColor,
 		setCloseness,
 		removeColor,
+		style = {},
 	}: PaletteItemWrapperProps) => {
 		const [isEditing, setIsEditing] = useState(false);
 		const handleSetColor = (color: cssColor) => {
@@ -252,6 +267,7 @@ const PaletteItemWrapper = memo(
 					initialColor={color}
 					submitColor={handleSetColor}
 					cancel={cancelEdit}
+					style={style}
 				/>
 			);
 		}
@@ -263,6 +279,7 @@ const PaletteItemWrapper = memo(
 				setCloseness={handleSetCloseness}
 				setIsEditing={setIsEditing}
 				deleteSelf={deleteSelf}
+				style={style}
 			/>
 		);
 	}
@@ -270,9 +287,10 @@ const PaletteItemWrapper = memo(
 
 type NewPaletteItemProps = {
 	addColor: (color: cssColor) => void;
+	style?: React.CSSProperties;
 };
 
-function NewPaletteItem({ addColor }: NewPaletteItemProps) {
+function NewPaletteItem({ addColor, style = {} }: NewPaletteItemProps) {
 	const [isEditing, setIsEditing] = useState(false);
 	const [savedInitialColor, saveInitialColor] = useState("#000000");
 
@@ -294,11 +312,12 @@ function NewPaletteItem({ addColor }: NewPaletteItemProps) {
 				initialColor={savedInitialColor}
 				submitColor={handleAddColor}
 				cancel={cancelEdit}
+				style={style}
 			/>
 		);
 	} else {
 		return (
-			<div className="palette-item new">
+			<div className="palette-item new" style={style}>
 				<button onClick={startEdit}>
 					<span className="icon">add</span> Add Color
 				</button>

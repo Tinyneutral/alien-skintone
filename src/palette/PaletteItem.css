@@ -1,40 +1,69 @@
-.palette-item .rank {
-	--rank-great-text: #000;
-	--rank-great-bg: #8ACC5A;
-	--rank-good-text: #000;
-	--rank-good-bg: #F3CE62;
-	--rank-meh-text: #888;
-	--rank-meh-bg: #ccc;
-	--rank-none-text: #888;
-	--rank-none-bg: #ccc;
+.palette-item {
+	--rank-border-any: #fff;
+	--rank-great-main: #000;
+	--rank-great-accent: #8ACC5A;
+	--rank-great-sub: #8ACC5A;
+	--rank-great-bg: var(--white);
+	--rank-good-main: #000;
+	--rank-good-accent: #F3CE62;
+	--rank-good-sub: #F3CE62;
+	--rank-good-bg: var(--white);
+	--rank-meh-main: #aaa;
+	--rank-meh-sub: #9D9D9D;
+	--rank-meh-bg: #7D7D7D;
+	--rank-none-main: #aaa;
+	--rank-none-sub: #9D9D9D;
+	--rank-none-bg: #7D7D7D;
 }
-.palette-item .rank.great {
-	--rank-text: var(--rank-great-text);
+.palette-item.rank-great,
+.palette-item .rank-great {
+	--rank-text: var(--rank-great-main);
+	--rank-border: calc(1.25rem / 2) solid var(--rank-border-any);
 	--rank-bg: var(--rank-great-bg);
+	--rank-button-bg: var(--rank-great-accent);
+	--rank-button-border: var(--rank-great-sub);
 }
-.palette-item .rank.good {
-	--rank-text: var(--rank-good-text);
+.palette-item.rank-good,
+.palette-item .rank-good {
+	--rank-text: var(--rank-good-main);
+	--rank-border: calc(1.25rem / 2) solid var(--rank-border-any);
 	--rank-bg: var(--rank-good-bg);
+	--rank-button-bg: var(--rank-good-accent);
+	--rank-button-border: var(--rank-good-sub);
 }
-.palette-item .rank.meh {
-	--rank-text: var(--rank-meh-text);
+.palette-item.rank-meh,
+.palette-item .rank-meh {
+	--rank-text: var(--rank-meh-main);
+	--rank-border: none;
+	--rank-border-width: 0px;
 	--rank-bg: var(--rank-meh-bg);
+	--rank-button-bg: var(--rank-meh-bg);
+	--rank-button-border: var(--rank-meh-sub);
 }
-.palette-item .rank.none {
-	--rank-text: var(--rank-none-text);
+.palette-item.rank-none,
+.palette-item .rank-none {
+	--rank-text: var(--rank-none-main);
+	--rank-border: none;
+	--rank-border-width: 0px;
 	--rank-bg: var(--rank-none-bg);
+	--rank-button-bg: var(--rank-none-bg);
+	--rank-button-border: var(--rank-none-sub);
 }
 
 .palette-item {
+	grid-column-end: span 1;
+	grid-row: span 1;
 	min-width: 10rem;
 	max-width: 20rem;
-	height: 1.6rem;
+	height: 100%;
+	min-height: 1.6rem;
 	display: flex;
 	align-items: stretch;
 	background-color: var(--white);
 }
 .palette-item .color {
 		flex: 1 0 0;
+		border-left: var(--rank-border);
 }
 .palette-item .feature-color {
 		width: 1.25rem;
@@ -47,31 +76,33 @@
 }
 .palette-item .rank {
 	width: 2rem;
-	padding: 0 0.4rem 0;
+	padding: 0.3rem 0.4rem;
 	display: flex;
-	align-items: center;
+	align-items: start;
 	justify-content: end;
 	text-align: right;
 	font-size: 1rem;
+	line-height: 1rem;
 	font-variant-numeric: lining-nums proportional-nums;
 	background-color: var(--rank-bg);
 	color: var(--rank-text);
 }
 .palette-item .buttons {
 		display: flex;
-		align-items: center;
+		align-items: start;
 		justify-content: end;
-		padding: 0 0.2rem 0;
-		border-top: 0.5px solid var(--primary-dull);
-		border-bottom: 0.5px solid var(--primary-dull);
+		padding: 0.3rem;
+		border-top: 0.5px solid var(--rank-button-border);
+		border-bottom: 0.5px solid var(--rank-button-border);
+		background-color: var(--rank-button-bg);
 }
 .palette-item .buttons button {
 			display: flex;
 			justify-content: center;
 			align-items: center;
 			text-align: center;
-			width: 1.1rem;
-			height: 1.1rem;
+			width: 0.9rem;
+			height: 0.9rem;
 			color: var(--bg);
 }
 .palette-item .buttons button.edit {
@@ -84,13 +115,12 @@
 			background-color: var(--delete);
 }
 .palette-item .buttons button .icon {
-				font-size: 0.8rem;
+				font-size: 0.72rem;
 }
 
 .palette-item.header {
 	height: 2rem;
 	align-items: end;
-	border-bottom: 1px solid var(--bg);
 }
 .palette-item.header p {
 	height: 1rem;
@@ -107,6 +137,8 @@
 }
 
 .palette-item.new {
+	grid-column-end: span 1;
+	grid-row: span 1;
 	align-items: center;
 	padding: 0.2rem 0 0.2rem 0.2rem;
 }
@@ -129,6 +161,8 @@ div:has(.edit-palette-item) {
 	container-name: edit-palette-item-container;
 }
 .edit-palette-item {
+	grid-column-end: span 1;
+	grid-row: span 1;
 	background-color: white;
 	color: var(--bg);
 	align-self: stretch;
