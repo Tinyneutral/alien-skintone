@@ -18,7 +18,8 @@
 		"react": "^19.2.8",
 		"react-dom": "^19.2.8",
 		"react-redux": "^9.3.0",
-		"sanitize.css": "^13.0.0"
+		"sanitize.css": "^13.0.0",
+		"wrangler": "^4.141.0"
 	},
 	"devDependencies": {
 		"@babel/core": "^7.29.7",
@@ -43,6 +44,8 @@
 	},
 	"allowScripts": {
 		"fsevents@2.3.3": true,
-		"fsevents@2.3.2": true
+		"fsevents@2.3.2": true,
+		"esbuild@0.28.1": true,
+		"workerd@1.20260925.1": true
 	}
 }

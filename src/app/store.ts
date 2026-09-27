@@ -1,6 +1,6 @@
 import { configureStore } from "@reduxjs/toolkit";
-import pickedColorReducer from "/features/pickedColor";
-import defaultEditSpaceReducer from "/features/defaultEditSpace";
+import pickedColorReducer from "@/features/pickedColor";
+import defaultEditSpaceReducer from "@/features/defaultEditSpace";
 
 export const store = configureStore({
 	reducer: {
