@@ -4,9 +4,13 @@ import Color from "colorjs.io";
  * @param {HTMLImageElement} img
  * @param {number} x
  * @param {number} y
- * @returns {Color}
+ * @returns {cssColor}
  */
-export function pickColorFromImage(img: HTMLImageElement, x: number, y: number) {
+export function pickColorFromImage(
+	img: HTMLImageElement,
+	x: number,
+	y: number
+): cssColor {
 	const c = document.createElement("canvas") as HTMLCanvasElement;
 	const ctx = c.getContext("2d")!;
 
@@ -14,20 +18,24 @@ export function pickColorFromImage(img: HTMLImageElement, x: number, y: number) 
 	c.height = img.naturalHeight;
 	ctx.drawImage(img, 0, 0);
 
-	const [ r, g, b ] = ctx.getImageData(x, y, 1, 1).data as ImageDataArray;
-	return new Color("srgb", [r, g, b]);
+	const [r, g, b] = ctx.getImageData(x, y, 1, 1).data as ImageDataArray;
+	return new Color("srgb", [r, g, b]).display();
 }
 
 /**
  * @param {HTMLCanvasElement} canvas
  * @param {number} x
  * @param {number} y
- * @returns {Color}
+ * @returns {cssColor}
  */
-export function pickColorFromCanvas(canvas: HTMLCanvasElement, x: number, y: number) {
+export function pickColorFromCanvas(
+	canvas: HTMLCanvasElement,
+	x: number,
+	y: number
+): cssColor {
 	const ctx = canvas.getContext("2d")!;
 	const [r, g, b] = ctx.getImageData(x, y, 1, 1).data as ImageDataArray;
-	return new Color("srgb", [r, g, b]);
+	return new Color("srgb", [r, g, b]).display();
 }
 
 /**
@@ -50,7 +58,8 @@ function loadImage(url: string) {
 	return new Promise((resolve, reject) => {
 		const img = new Image();
 		img.onload = () => resolve(img);
-		img.onerror = () => reject(new Error("Failed to load background image"));
+		img.onerror = () =>
+			reject(new Error("Failed to load background image"));
 		img.src = url;
 	});
 }
@@ -67,7 +76,7 @@ export async function cropOutBg(el: HTMLElement) {
 	if (!match) {
 		throw new Error("No background-image url");
 	}
-	const img = await loadImage(match[1]) as HTMLImageElement;
+	const img = (await loadImage(match[1])) as HTMLImageElement;
 
 	const nw = img.naturalWidth;
 	const nh = img.naturalHeight;

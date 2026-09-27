@@ -1,10 +1,17 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
+
+import App from "./App";
+import { store } from "./store";
+import { Provider } from "react-redux";
+
+import "sanitize.css";
 import "./index.css";
-import App from "./App/App.js";
 
 createRoot(document.getElementById("root") as HTMLElement).render(
 	<StrictMode>
-		<App />
+		<Provider store={store}>
+			<App />
+		</Provider>
 	</StrictMode>
 );

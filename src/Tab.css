@@ -1,0 +1,103 @@
+.tabs {
+    display: flex;
+    align-items: end;
+    overflow-x: scroll;
+    gap: 4px;
+    scrollbar-gutter: stable;
+    scrollbar-width: thin;
+    scroll-snap-align: start;
+    scroll-snap-type: x proximity;
+}
+.tabs,
+.tab,
+.new-tab {
+    transform:rotateX(180deg);
+    -moz-transform:rotateX(180deg); /* Mozilla */
+    -webkit-transform:rotateX(180deg); /* Safari and Chrome */
+    -o-transform:rotateX(180deg); /* Opera */
+}
+
+.tab:not(.active) {
+    border-color: var(--secondary-dull);
+    background-color: var(--primary-dull);
+    p {
+        color: var(--secondary-bright);
+    }
+    .head button.close {
+            background-color: var(--primary-duller);
+    }
+    .head button.close .icon {
+                color: var(--secondary);
+    }
+}
+.tab.active {
+    background-color: var(--primary);
+    p {
+        color: var(--secondary-brighter);
+    }
+    .head button.close {
+            background-color: var(--primary-dull);
+    }
+    .head button.close .icon {
+                color: var(--secondary);
+    }
+}
+.new-tab {
+    border-color: var(--secondary);
+}
+
+.new-tab,
+.tab {
+    --border: 1px;
+    --head-height: 1rem;
+    flex-shrink: 0;
+}
+.new-tab {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: calc(var(--preview-width) + var(--border) * 2);
+    height: calc(var(--preview-height) + var(--head-height));
+    border-width: var(--border) var(--border) 0;
+    border-style: solid solid none;
+}
+.new-tab button {
+        font-size: 0.75rem;
+        color: var(--accent);
+        text-decoration: underline;
+        cursor: pointer;
+        background: none;
+        border: none;
+        padding: 0;
+}
+.tab {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    width: calc(var(--preview-width) + var(--border) * 2);
+    height: calc(var(--preview-height) + var(--head-height));
+}
+.tab .head {
+        width: 100%;
+        height: var(--head-height);
+        display: flex;
+        justify-content: space-between;
+        align-items: start;
+}
+.tab .head p {
+            padding-left: 0.2rem;
+            line-height: var(--head-height);
+            font-size: 0.75rem;
+            font-weight: 600;
+}
+.tab .head button.close {
+            width: 1rem;
+            height: calc(0.8rem - var(--border));
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+.tab .head button.close .icon {
+                font-size: 0.6rem;
+}

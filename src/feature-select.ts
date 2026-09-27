@@ -16,7 +16,7 @@ function clamp(val: number, min: number, max: number) {
  * }} Preset
  */
 
-export const MODES = /** @type {const} */ (["default", "advanced"]);
+export const MODES = /** @type {const} */ ["default", "advanced"];
 
 /** @type {Preset[]} */
 export const DEFAULT_PRESETS = [
@@ -153,7 +153,11 @@ export function setCoordStrength(index: number, value: number) {
 	if (!coordExists(space, index)) {
 		throw new Error(`Coord does not exist: ${index}`);
 	}
-	if (!Number.isInteger(index) || index < 0 || index >= coordStrengths.length) {
+	if (
+		!Number.isInteger(index) ||
+		index < 0 ||
+		index >= coordStrengths.length
+	) {
 		throw new RangeError(`Coord index out of range: ${index}`);
 	}
 	coordStrengths[index] = clamp(Number(value), 0, 1);
@@ -190,12 +194,11 @@ export function getCoordStrengths() {
 }
 
 /**
- * @param {Rgb} color
+ * @param {cssColor} color
  * @returns {Promise<void>}
  */
-export async function copyHexToClipboard(color: Color) {
-	const hex = color.to("hex").toString();
-	await navigator.clipboard.writeText(hex);
+export async function copyCssColorToClipboard(color: cssColor) {
+	await navigator.clipboard.writeText(new Color(color).display());
 }
 
 /**
