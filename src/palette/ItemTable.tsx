@@ -1,8 +1,8 @@
-import { useState, useRef, useLayoutEffect, useMemo } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
 import { ItemHeader, Item, NewItem } from "./Item";
-import "./ItemGrid.css";
+import "./ItemTable.css";
 
-type ItemGridProps = {
+type ItemTableProps = {
 	colors: cssColor[];
 	closenesses: number[];
 	ranks: number[];
@@ -13,7 +13,7 @@ type ItemGridProps = {
 	paletteRef: React.RefObject<HTMLDivElement | null>;
 };
 
-function ItemGrid({
+function ItemTable({
 	colors,
 	closenesses,
 	ranks,
@@ -22,23 +22,26 @@ function ItemGrid({
 	setColor,
 	setCloseness,
 	paletteRef,
-}: ItemGridProps) {
+}: ItemTableProps) {
 	const [inputtedRows, setInputtedRowAmount] = useState(4);
 	const [possibleRows, setPossibleRowAmount] = useState(4);
 	const cellRef = useRef<HTMLDivElement>(null);
-	useLayoutEffect(() => {
+	// Parent host refs attach after child layout effects, so paletteRef is still null in useLayoutEffect.
+	useEffect(() => {
 		if (!paletteRef.current) return;
 		let lastWidth = 0;
 		let timeoutId: ReturnType<typeof setTimeout>;
 
 		const observer = new ResizeObserver(([entry]) => {
-			if (!paletteRef.current || !cellRef.current) return;
-
+			if (!paletteRef.current || !cellRef.current) {
+				return;
+			}
 			const width = Math.round(entry.contentBoxSize[0].inlineSize);
 			if (width === lastWidth) {
 				return;
 			}
 			lastWidth = width;
+			console.log("width", width);
 
 			observer.unobserve(paletteRef.current);
 			clearTimeout(timeoutId);
@@ -70,7 +73,7 @@ function ItemGrid({
 	const [groupCols, setGroupCols] = useState(8);
 	const groupItems = rows * groupCols;
 
-	const gridRow = (row: number) => {
+	const tableRow = (row: number) => {
 		const start = row * groupCols;
 		const trills = getTrills(start, groupCols, groupItems, colors.length - 1);
 		const isEndRow =
@@ -78,15 +81,10 @@ function ItemGrid({
 		const style = { gridColumnStart: row + 1 };
 
 		return [
-			<ItemHeader
-				key={`${row}-header`}
-				style={style}
-				ref={row === 0 ? cellRef : undefined}
-			/>,
 			...trills.map((trill) =>
 				trill.map((index) => (
 					<Item
-						key={`${row}-${index}`}
+						key={`${index}`}
 						index={index}
 						color={colors[index]}
 						rank={ranks[index]}
@@ -99,21 +97,26 @@ function ItemGrid({
 				))
 			),
 			...(isEndRow
-				? [
-						<NewItem
-							key={`${row}-new`}
-							addColor={addColor}
-							style={style}
-						/>,
-					]
+				? [<NewItem key={`${row}-new`} addColor={addColor} style={style} />]
 				: []),
 		];
 	};
-	const gridRows = Array.from({ length: rows }, (_, row) => gridRow(row));
+	const tableHeaderRow = (row: number) => {
+		const style = { gridColumnStart: row + 1 };
+		return (
+			<ItemHeader
+				key={`${row}-header`}
+				style={style}
+				ref={row === 0 ? cellRef : undefined}
+			/>
+		);
+	};
+	const tableHeaderRows = Array.from({ length: rows }, (_, row) => tableHeaderRow(row));
+	const tableRows = Array.from({ length: rows }, (_, row) => tableRow(row));
 
 	return (
 		<>
-			<div className="grid-config">
+			<div className="table-config">
 				<label>
 					Rows:{" "}
 					<input
@@ -139,9 +142,18 @@ function ItemGrid({
 				</label>
 			</div>
 			<div
-				className="grid"
+				className="table"
 				style={{ ["--rows"]: String(rows) } as React.CSSProperties}>
-				{gridRows.flat().map((item) => item)}
+				<div className="head">
+					{tableHeaderRows.flat().map((item) => item)}
+				</div>
+				<div className="body">
+					{tableRows.map((row, rowIndex) => (
+						<div key={rowIndex} className="row">
+							{row.map((item) => item)}
+						</div>
+					))}
+				</div>
 			</div>
 		</>
 	);
@@ -167,4 +179,4 @@ function getTrills(
 	return trills;
 }
 
-export default ItemGrid;
+export default ItemTable;

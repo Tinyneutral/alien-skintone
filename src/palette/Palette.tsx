@@ -1,10 +1,10 @@
 import { useCallback, useRef, type SetStateAction } from "react";
 import Color from "colorjs.io";
 
-import ItemGrid from "./ItemGrid";
+import ItemTable from "./ItemTable";
 
 import { type PaletteData, INITIAL_CLOSENESS } from "./palette.ts";
-import "./Palette.css";
+import "@/palette/Palette.css";
 
 type PaletteProps = {
 	content: {
@@ -70,7 +70,7 @@ function Palette({
 
 	return (
 		<div className="palette" ref={paletteRef}>
-			<ItemGrid
+			<ItemTable
 				colors={colors}
 				closenesses={closenesses}
 				ranks={ranks}
