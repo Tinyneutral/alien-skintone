@@ -60,38 +60,38 @@ const Item = memo(
 
 		const rankClass = useMemo(() => {
 			if (typeof rank !== "number") {
-				return "rank-none";
+				return "none";
 			} else if (rank <= 3) {
-				return "rank-great";
+				return "great";
 			} else if (rank <= 10) {
-				return "rank-good";
+				return "good";
 			} else {
-				return "rank-meh";
+				return "meh";
 			}
 		}, [rank]);
 		const bg = (color: cssColor): React.CSSProperties => {
 			return { backgroundColor: color };
 		};
 		return (
-			<div className={`item ${rankClass}`} style={style}>
+			<div className="item" style={style}>
+				<div className={`rank ${rankClass}`}>
+					<p>{rank}</p>
+				</div>
 				<div className="feature-color" style={bg(featureColor)}>
 					<div
 						className="picked-color-overlay"
 						style={bg(pickedFeatureColor)}></div>
 				</div>
 				<div className="color" style={bg(color)}></div>
-				<p className={`rank ${rankClass}`}>{rank}</p>
-				<div className={`buttons ${rankClass}`}>
-					<button className="edit" onClick={handleEdit}>
-						<span className="icon">edit</span>
-					</button>
-					<button className="copy" onClick={handleCopy}>
-						<span className="icon">copy</span>
-					</button>
-					<button className="delete" onClick={deleteSelf}>
-						<span className="icon">delete</span>
-					</button>
-				</div>
+				<button className="edit" onClick={handleEdit}>
+					<span className="icon">edit</span>
+				</button>
+				<button className="copy" onClick={handleCopy}>
+					<span className="icon">copy</span>
+				</button>
+				<button className="delete" onClick={deleteSelf}>
+					<span className="icon">delete</span>
+				</button>
 			</div>
 		);
 	}
@@ -213,11 +213,8 @@ type ItemHeaderProps = {
 const ItemHeader = memo(({ style = {}, ref }: ItemHeaderProps) => {
 	return (
 		<div className="item header" style={style} ref={ref}>
-			<div className="feature-color">
-				<div className="picked-color-overlay"></div>
-			</div>
-			<p className="color">Color</p>
-			<p className="meta">Rank</p>
+			<div className="rank"><p>Rank</p></div>
+			<div className="color"><p>Color</p></div>
 		</div>
 	);
 });

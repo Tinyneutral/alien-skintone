@@ -1,31 +1,54 @@
 .palette {
-	.grid {
-		display: grid;
-		grid-auto-flow: column;
-		grid-auto-rows: max-content;
-		grid-template-columns: repeat(var(--rows), minmax(10rem, 1fr));
-		width: min(100%, calc(var(--rows) * 20rem));
-		height: fit-content;
+	.table {
+		align-self: stretch;
+		max-width: calc(16rem * var(--rows) + 0.8rem * (var(--rows) - 1) + 0.2rem * 2);
+		display: flex;
+		flex-direction: column;
+		align-items: stretch;
+		padding: 0.4rem 0.2rem 0.6rem 0.2rem;
+		background-color: var(--white);
 	}
-	.grid-config {
+	.table .head,
+	.table .body {
+			width: 100%;
+			display: flex;
+			gap: 0.8rem;
+	}
+	.table .head {
+		border-bottom: max(0.08rem, 1px) solid var(--grey);
+	}
+	.table .body {
+		border-bottom: max(0.06rem, 1px) solid var(--grey);
+	}
+	.table .body .row {
+				flex: 1 0 0;
+				height: fit-content;
+				display: flex;
+				flex-direction: column;
+				align-items: stretch;
+				gap: 0.04rem;
+				background-color: var(--grey);
+	}
+	.table-config {
 		display: flex;
 		align-items: center;
+		/* margin: 0 12px; */
 		padding: 0.4rem 0;
 		gap: 4px;
 		color: var(--secondary);
 	}
-	.grid-config label,
-	.grid-config input {
+	.table-config label,
+	.table-config input {
 			display: flex;
 			align-items: center;
 			font-size: 0.8rem;
 			line-height: 1.2rem;
 			color: var(--secondary);
 	}
-	.grid-config label {
+	.table-config label {
 			gap: 0.2rem;
 	}
-	.grid-config input {
+	.table-config input {
 			justify-content: start;
 			text-align: left;
 			padding-left: 0.2rem;
