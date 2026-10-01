@@ -1,8 +1,8 @@
 import { useState, useRef, useEffect, useMemo } from "react";
 import { ItemHeader, Item, NewItem } from "./Item";
-import "./ItemGrid.css";
+import "./ItemTable.css";
 
-type ItemGridProps = {
+type ItemTableProps = {
 	colors: cssColor[];
 	closenesses: number[];
 	ranks: number[];
@@ -13,7 +13,7 @@ type ItemGridProps = {
 	paletteRef: React.RefObject<HTMLDivElement | null>;
 };
 
-function ItemGrid({
+function ItemTable({
 	colors,
 	closenesses,
 	ranks,
@@ -22,7 +22,7 @@ function ItemGrid({
 	setColor,
 	setCloseness,
 	paletteRef,
-}: ItemGridProps) {
+}: ItemTableProps) {
 	const [inputtedRows, setInputtedRowAmount] = useState(4);
 	const [possibleRows, setPossibleRowAmount] = useState(4);
 	const cellRef = useRef<HTMLDivElement>(null);
@@ -179,4 +179,4 @@ function getTrills(
 	return trills;
 }
 
-export default ItemGrid;
+export default ItemTable;
