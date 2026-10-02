@@ -50,3 +50,8 @@
 .palette .dev .inputs label a {
                     color: var(--accent);
 }
+.palette .dev .inputs input {
+                grid-row: span 3;
+                width: 4rem;
+                height: 100%;
+}

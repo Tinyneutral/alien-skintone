@@ -2,9 +2,12 @@ import { useCallback, useRef, type SetStateAction } from "react";
 import Color from "colorjs.io";
 
 import ItemTable from "./ItemTable";
+import { useAppDispatch } from "@/app/hooks.ts";
+import { setPickedColor } from "@/features/pickedColor.ts";
 
 import { type PaletteData, INITIAL_CLOSENESS } from "./palette.ts";
 import "@/palette/Palette.css";
+import { useAppSelector } from "@/app/hooks.ts";
 
 type PaletteProps = {
 	content: {
@@ -19,6 +22,8 @@ function Palette({
 	setPaletteData,
 }: PaletteProps) {
 	const paletteRef = useRef<HTMLDivElement>(null);
+	const dispatch = useAppDispatch();
+	const pickedColor = useAppSelector((state) => state.pickedColor);
 
 	const setColors = useCallback(
 		(colors: SetStateAction<cssColor[]>) => {
@@ -91,6 +96,12 @@ function Palette({
 				<p>
 					以下のボタンはデモ用で、完成版には含まれません。（完成版ではパレットを読み込む機能を実装する予定です。）
 				</p>
+				<div className="inputs">
+					<input
+						type="color"
+						value={pickedColor}
+						onChange={(e) => dispatch(setPickedColor(e.target.value))}
+					/>
 					<button onClick={handleInit}>Init Palette</button>
 					<button onClick={handleInit2}>Init Palette 2</button>
 					<label>
