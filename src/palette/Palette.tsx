@@ -80,8 +80,18 @@ function Palette({
 				setCloseness={setCloseness}
 				paletteRef={paletteRef}
 			/>
-			<button onClick={handleInit}>Init Palette</button>
-			<button onClick={handleInit2}>Init Palette 2</button>
+			<div className="dev">
+				<p>
+					The buttons below are for demo use only. (There will be an "import
+					palette" button as an alternative.)
+				</p>
+				<p>
+					以下のボタンはデモ用で、完成版には含まれません。（完成版ではパレットを読み込む機能を実装する予定です。）
+				</p>
+					<button onClick={handleInit}>Init Palette</button>
+					<button onClick={handleInit2}>Init Palette 2</button>
+				</div>
+			</div>
 		</div>
 	);
 }
@@ -110,36 +120,39 @@ function getRanks(closenesses: number[]) {
 }
 
 function initPalette(addColor: (color: cssColor) => void) {
-	addColor("#ff0000");
-	addColor("#008000");
-	addColor("#0000ff");
-	addColor("#ffff00");
-	addColor("#800080");
-	addColor("#ffa500");
-	addColor("#a52a2a");
-	addColor("#808080");
-	addColor("#000000");
-	addColor("#ffffff");
-	addColor("#ff0000");
-	addColor("#008000");
-	addColor("#0000ff");
-	addColor("#ffff00");
-	addColor("#800080");
-	addColor("#ffa500");
-	addColor("#a52a2a");
-	addColor("#808080");
-	addColor("#000000");
-	addColor("#ffffff");
-	addColor("#ff0000");
-	addColor("#008000");
-	addColor("#0000ff");
-	addColor("#ffff00");
-	addColor("#800080");
-	addColor("#ffa500");
-	addColor("#a52a2a");
-	addColor("#808080");
-	addColor("#000000");
-	addColor("#ffffff");
+	const colors = [
+		"#ff0000",
+		"#008000",
+		"#0000ff",
+		"#ffff00",
+		"#800080",
+		"#ffa500",
+		"#a52a2a",
+		"#808080",
+		"#000000",
+		"#ffffff",
+		"#ff0000",
+		"#008000",
+		"#0000ff",
+		"#ffff00",
+		"#800080",
+		"#ffa500",
+		"#a52a2a",
+		"#808080",
+		"#000000",
+		"#ffffff",
+		"#ff0000",
+		"#008000",
+		"#0000ff",
+		"#ffff00",
+		"#800080",
+		"#ffa500",
+		"#a52a2a",
+		"#808080",
+		"#000000",
+		"#ffffff",
+	];
+	colors.forEach(addColor);
 }
 
 function initPalette2(addColor: (color: cssColor) => void) {
