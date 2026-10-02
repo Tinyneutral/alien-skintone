@@ -111,7 +111,9 @@ function ItemTable({
 			/>
 		);
 	};
-	const tableHeaderRows = Array.from({ length: rows }, (_, row) => tableHeaderRow(row));
+	const tableHeaderRows = Array.from({ length: rows }, (_, row) =>
+		tableHeaderRow(row)
+	);
 	const tableRows = Array.from({ length: rows }, (_, row) => tableRow(row));
 
 	return (
@@ -144,9 +146,7 @@ function ItemTable({
 			<div
 				className="table"
 				style={{ ["--rows"]: String(rows) } as React.CSSProperties}>
-				<div className="head">
-					{tableHeaderRows.flat().map((item) => item)}
-				</div>
+				<div className="head">{tableHeaderRows.flat().map((item) => item)}</div>
 				<div className="body">
 					{tableRows.map((row, rowIndex) => (
 						<div key={rowIndex} className="row">

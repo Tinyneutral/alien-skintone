@@ -213,8 +213,12 @@ type ItemHeaderProps = {
 const ItemHeader = memo(({ style = {}, ref }: ItemHeaderProps) => {
 	return (
 		<div className="item header" style={style} ref={ref}>
-			<div className="rank"><p>Rank</p></div>
-			<div className="color"><p>Color</p></div>
+			<div className="rank">
+				<p>Rank</p>
+			</div>
+			<div className="color">
+				<p>Color</p>
+			</div>
 		</div>
 	);
 });
