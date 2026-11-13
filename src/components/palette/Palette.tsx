@@ -6,7 +6,7 @@ import { useAppDispatch } from "@/app/hooks.ts";
 import { setPickedColor } from "@/features/pickedColor.ts";
 
 import { type PaletteData, INITIAL_CLOSENESS } from "./palette.ts";
-import "@/palette/Palette.css";
+import "./Palette.css";
 import { useAppSelector } from "@/app/hooks.ts";
 
 type PaletteProps = {

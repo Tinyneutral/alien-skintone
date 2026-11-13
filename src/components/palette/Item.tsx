@@ -4,7 +4,7 @@ import { useState, useEffect, useRef, useMemo, memo } from "react";
 import { useAppDispatch, useAppSelector } from "@/app/hooks";
 import outOfGamutUrl from "@/assets/svg/out-of-gamut.svg";
 import { setDefaultEditSpace } from "@/features/defaultEditSpace";
-import { copyCssColorToClipboard } from "@/feature-select";
+import { copyCssColorToClipboard } from "@/components/feature-select";
 
 import { toWeighted, deltaE } from "./closeness";
 import "./Item.css";

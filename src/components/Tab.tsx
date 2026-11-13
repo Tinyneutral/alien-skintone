@@ -1,4 +1,4 @@
-import type { SlotAction } from "@/features/useSlots";
+import type { SlotAction } from "@/components/useSlots";
 import "./Tab.css";
 
 interface TabProps<T> {
