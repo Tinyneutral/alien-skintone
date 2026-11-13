@@ -3,7 +3,7 @@ import Color from "colorjs.io";
 
 import ItemTable from "./ItemTable";
 import { useAppDispatch } from "@/app/hooks.ts";
-import { setPickedColor } from "@/features/pickedColor.ts";
+import { pickTargetColor } from "@/features/targetColor.ts";
 
 import { type PaletteData, INITIAL_CLOSENESS } from "./palette.ts";
 import "./Palette.css";
@@ -23,7 +23,7 @@ function Palette({
 }: PaletteProps) {
 	const paletteRef = useRef<HTMLDivElement>(null);
 	const dispatch = useAppDispatch();
-	const pickedColor = useAppSelector((state) => state.pickedColor);
+	const targetColor = useAppSelector((state) => state.targetColor);
 
 	const setColors = useCallback(
 		(colors: SetStateAction<cssColor[]>) => {
@@ -99,14 +99,21 @@ function Palette({
 				<div className="inputs">
 					<input
 						type="color"
-						value={pickedColor}
-						onChange={(e) => dispatch(setPickedColor(e.target.value))}
+						value={targetColor}
+						onChange={(e) => dispatch(pickTargetColor(e.target.value))}
 					/>
 					<button onClick={handleInit}>Init Palette</button>
 					<button onClick={handleInit2}>Init Palette 2</button>
 					<label>
-						<button onClick={handleInit3}>The REAL Init Palette</button>
-						{" "}palette made by _izz_ ( <a href="https://pin.it/69lsNiOWB" target="_blank" rel="noopener noreferrer">Pinterest link</a> )
+						<button onClick={handleInit3}>The REAL Init Palette</button> palette
+						made by _izz_ ({" "}
+						<a
+							href="https://pin.it/69lsNiOWB"
+							target="_blank"
+							rel="noopener noreferrer">
+							Pinterest link
+						</a>{" "}
+						)
 					</label>
 				</div>
 			</div>
@@ -294,9 +301,9 @@ function initPalette3(addColor: (color: cssColor) => void) {
 		"#947a5c",
 		"#846a4f",
 		"#6c5744",
-		"#342c29"
+		"#342c29",
 	];
-	colors.forEach(hex => addColor(hex));
+	colors.forEach((hex) => addColor(hex));
 }
 
 export default Palette;

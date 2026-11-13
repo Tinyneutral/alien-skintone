@@ -29,7 +29,7 @@ const Item = memo(
 		deleteSelf,
 		style = {},
 	}: ItemProps) => {
-		const pickedColor = useAppSelector((state) => state.pickedColor);
+		const targetColor = useAppSelector((state) => state.targetColor);
 		const featureSpace = Color.spaces.oklab; // TODO: redux
 		const featureWeights: number[] = useMemo(() => [1, 0, 0], []); // TODO: redux
 
@@ -37,13 +37,13 @@ const Item = memo(
 			() => toWeighted(color, featureSpace, featureWeights),
 			[color, featureSpace, featureWeights]
 		);
-		const pickedFeatureColor: string = useMemo(
-			() => toWeighted(pickedColor, featureSpace, featureWeights),
-			[pickedColor, featureSpace, featureWeights]
+		const targetFeatureColor: string = useMemo(
+			() => toWeighted(targetColor, featureSpace, featureWeights),
+			[targetColor, featureSpace, featureWeights]
 		);
 		const newCloseness: number = useMemo(
-			() => deltaE(featureColor, pickedFeatureColor),
-			[featureColor, pickedFeatureColor]
+			() => deltaE(featureColor, targetFeatureColor),
+			[featureColor, targetFeatureColor]
 		);
 		useEffect(() => {
 			if (newCloseness !== closeness) {
@@ -80,7 +80,7 @@ const Item = memo(
 				<div className="feature-color" style={bg(featureColor)}>
 					<div
 						className="picked-color-overlay"
-						style={bg(pickedFeatureColor)}></div>
+						style={bg(targetFeatureColor)}></div>
 				</div>
 				<div className="color" style={bg(color)}></div>
 				<button className="edit" onClick={handleEdit}>
