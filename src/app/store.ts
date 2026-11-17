@@ -1,11 +1,13 @@
 import { configureStore } from "@reduxjs/toolkit";
 import targetColorReducer from "@/features/targetColor";
 import defaultEditSpaceReducer from "@/features/defaultEditSpace";
+import { rootReducer } from "@/features/root";
 
 export const store = configureStore({
 	reducer: {
 		targetColor: targetColorReducer,
 		defaultEditSpace: defaultEditSpaceReducer,
+		test: rootReducer,
 	},
 	middleware: (getDefaultMiddleware) =>
 		getDefaultMiddleware({
