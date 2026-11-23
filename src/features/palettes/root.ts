@@ -1,28 +1,29 @@
 import {
-	type Reducer,
-	type Pred,
-	initialState,
-	type RootState,
-	filterObject,
-} from "./rootCommon";
-import {
-	reducer1,
-	pred1,
-	reducer2,
-	pred2,
-	bothReducer
-} from "./test";
+	type UnknownAction,
+	type Reducer as ToolkitReducer,
+} from "@reduxjs/toolkit";
+import { filterObject } from "@/other/filterObject";
 
-const rootReducer = reduceReducersWithFilter<RootState>(
+import { type Palettes, initialPalettesState } from "./lib/palettes";
+import { reducer as palettesReducer } from "./palettes";
+import { reducer as paletteReducer } from "./palette";
+import { reducer as targetColorReducer } from "./targetColor";
+import { reducer as filterReducer } from "./filter";
+
+const rootReducer = reduceReducersWithFilter<Palettes>(
 	[
-		[reducer1, pred1],
-		[reducer2, pred2],
-		[bothReducer]
+		[palettesReducer],
+		[paletteReducer],
+		[targetColorReducer],
+		[filterReducer],
 	],
-	initialState
+	initialPalettesState
 );
 
 export { rootReducer as palettesReducer };
+
+type Reducer<T> = ToolkitReducer<T, UnknownAction>;
+type Pred<T> = (value: [keyof T, T[keyof T]]) => boolean;
 
 /**
  * Reduces a list of reducers with a filter function.
@@ -46,6 +47,9 @@ function reduceReducersWithFilter<T extends object>(
 				const pass = filterObject(next, (x) => !pred(x));
 
 				const reducedEntry = reducer(entry, action);
+				if (!reducedEntry) {
+					return pass as T;
+				}
 				return merge(reducedEntry, pass) as unknown as T;
 			},
 			state ?? initialState
