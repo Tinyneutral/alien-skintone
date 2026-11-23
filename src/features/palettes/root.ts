@@ -22,7 +22,7 @@ const rootReducer = reduceReducersWithFilter<RootState>(
 	initialState
 );
 
-export { rootReducer };
+export { rootReducer as palettesReducer };
 
 /**
  * Reduces a list of reducers with a filter function.

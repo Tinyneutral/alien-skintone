@@ -2,9 +2,12 @@
  * Create a factory function for generating unique IDs.
  * @returns {() => Id} A function that generates a unique ID.
  */
-function nextIdFactory() {
-	let id = 0;
-	return function nextId() {
+function nextIdFactory(initialId: Id = 0) {
+	let id = initialId;
+	return function nextId(peek?: "peek") {
+		if (peek) {
+			return id;
+		}
 		const newId = id;
 		id++;
 		return newId;
@@ -17,7 +20,10 @@ function nextIdFactory() {
  */
 function nextEntryIdFactory(paletteId: Id) {
 	let id = 0;
-	return function nextId() {
+	return function nextId(peek?: "peek") {
+		if (peek) {
+			return `${paletteId}-${id}`;
+		}
 		const newId = `${paletteId}-${id}`;
 		id++;
 		return newId;
@@ -36,9 +42,9 @@ type PaletteIds = {
 };
 
 const initialPaletteIds: PaletteIds = {
-	paletteIds: {},
-	_nextId: nextIdFactory(),
-	_nextEntryIds: {},
+	paletteIds: { 0: [] },
+	_nextId: nextIdFactory(1),
+	_nextEntryIds: { 0: nextEntryIdFactory(0) },
 };
 
 export type { Id, EntryId, PaletteIds };
