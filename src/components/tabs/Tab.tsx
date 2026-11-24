@@ -16,7 +16,10 @@ function Tab({ id, label, onClose, children }: TabProps) {
 			onClick={() => setActiveId(id)}>
 			<div className="head">
 				<p>{label}</p>
-				<button className="close" onClick={onClose}>
+				<button className="close" onClick={(e) => {
+					e.stopPropagation();
+					onClose();
+					}}>
 					<span className="icon">delete</span>
 				</button>
 			</div>
