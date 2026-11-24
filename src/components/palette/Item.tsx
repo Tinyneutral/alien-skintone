@@ -16,11 +16,10 @@ type ItemProps = {
 	color: cssColor;
 	rank: number | "-";
 	setIsEditing: (isEditing: boolean) => void;
-	style?: React.CSSProperties;
 };
 
 const Item = memo(
-	({ id, color, rank, setIsEditing, style = {} }: ItemProps) => {
+	({ id, color, rank, setIsEditing }: ItemProps) => {
 		const paletteId = useContext(PaletteContext);
 		const dispatch = useAppDispatch();
 
@@ -43,7 +42,7 @@ const Item = memo(
 			return { backgroundColor: color };
 		};
 		return (
-			<div className="item" style={style}>
+			<div className="item">
 				<div className={`rank ${rankClass}`}>
 					<p>{rank}</p>
 				</div>
@@ -73,14 +72,12 @@ type EditItemProps = {
 	initialColor: cssColor;
 	submitColor: (color: cssColor) => void;
 	cancel: () => void;
-	style?: React.CSSProperties;
 };
 
 function EditItem({
 	initialColor,
 	submitColor,
 	cancel,
-	style = {},
 }: EditItemProps) {
 	const defaultSpace = useAppSelector((state) => state.defaultEditSpace);
 	const dispatch = useAppDispatch();
@@ -111,7 +108,7 @@ function EditItem({
 		return { backgroundColor: color };
 	};
 	return (
-		<div className="edit-item-container" style={style}>
+		<div className="edit-item-container">
 			<div className="edit-item">
 				<div className="preview">
 					<div className="now" style={bg(color.display())}></div>
@@ -181,11 +178,10 @@ type ItemWrapperProps = {
 	id: EntryId;
 	color: cssColor;
 	rank: number | "-";
-	style?: React.CSSProperties;
 };
 
 const ItemWrapper = memo(
-	({ id, color, rank, style = {} }: ItemWrapperProps) => {
+	({ id, color, rank }: ItemWrapperProps) => {
 		const paletteId = useContext(PaletteContext);
 		const dispatch = useAppDispatch();
 		const [isEditing, setIsEditing] = useState(false);
@@ -199,7 +195,6 @@ const ItemWrapper = memo(
 						dispatch(changeColor({ paletteId, id, color }));
 					}}
 					cancel={() => setIsEditing(false)}
-					style={style}
 				/>
 			);
 		} else {
@@ -209,14 +204,13 @@ const ItemWrapper = memo(
 					color={color}
 					rank={rank}
 					setIsEditing={setIsEditing}
-					style={style}
 				/>
 			);
 		}
 	}
 );
 
-function NewItem({ style = {} }: { style?: React.CSSProperties }) {
+function NewItem() {
 	const paletteId = useContext(PaletteContext);
 	const dispatch = useAppDispatch();
 	const [isEditing, setIsEditing] = useState(false);
@@ -232,12 +226,11 @@ function NewItem({ style = {} }: { style?: React.CSSProperties }) {
 					dispatch(addColor({ paletteId, color }));
 				}}
 				cancel={() => setIsEditing(false)}
-				style={style}
 			/>
 		);
 	} else {
 		return (
-			<div className="item new" style={style}>
+			<div className="item new">
 				<button onClick={() => setIsEditing(true)}>
 					<span className="icon">add</span> Add Color
 				</button>
@@ -247,13 +240,12 @@ function NewItem({ style = {} }: { style?: React.CSSProperties }) {
 }
 
 type ItemHeaderProps = {
-	style?: React.CSSProperties;
 	ref?: React.Ref<HTMLDivElement>;
 };
 
-const ItemHeader = memo(({ style = {}, ref }: ItemHeaderProps) => {
+const ItemHeader = memo(({ ref }: ItemHeaderProps) => {
 	return (
-		<div className="item header" style={style} ref={ref}>
+		<div className="item header" ref={ref}>
 			<div className="rank">
 				<p>Rank</p>
 			</div>

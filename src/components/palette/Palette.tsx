@@ -93,7 +93,6 @@ function ItemTable({ entries, possibleRows, cellRef }: ItemTableProps) {
 		const trills = getTrills(start, groupCols, groupItems, entries.length - 1);
 		const isEndRow =
 			Math.floor((entries.length % groupItems) / groupCols) === row;
-		const style = {};
 
 		return [
 			...trills.map((trill) =>
@@ -103,19 +102,16 @@ function ItemTable({ entries, possibleRows, cellRef }: ItemTableProps) {
 						id={entries[index].id}
 						color={entries[index].color}
 						rank={entries[index].rank}
-						style={style}
 					/>
 				))
 			),
-			...(isEndRow ? [<NewItem key={`${row}-new`} style={style} />] : []),
+			...(isEndRow ? [<NewItem key={`${row}-new`} />] : []),
 		];
 	};
 	const tableHeaderRow = (row: number) => {
-		const style = { gridColumnStart: row + 1 };
 		return (
 			<ItemHeader
 				key={`${row}-header`}
-				style={style}
 				ref={row === 0 ? cellRef : undefined}
 			/>
 		);
