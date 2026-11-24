@@ -11,5 +11,7 @@ const targetColorSlice = createSlice({
 	},
 });
 
+// TODO: link with palettes/ranks/target, using the same action pickTargetColor
+
 export const { pickTargetColor } = targetColorSlice.actions;
 export default targetColorSlice.reducer;

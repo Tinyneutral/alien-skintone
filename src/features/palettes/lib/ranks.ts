@@ -85,5 +85,7 @@ function rank(closenesses: { [key: EntryId]: Closeness }): {
 	);
 }
 
+// TODO: link with ../targetColor, using the same action pickTargetColor
+
 export type { Closeness, Rank, Ranks, Space, Weight };
 export { initialRanks, closeness, filter, rank };
