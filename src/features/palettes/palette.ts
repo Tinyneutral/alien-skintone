@@ -22,6 +22,9 @@ const deleteColor = createAction<{
 	paletteId: Id;
 	id: EntryId;
 }>("palette/deleteColor");
+const deleteAllColors = createAction<{
+	paletteId: Id;
+}>("palette/deleteAllColors");
 
 const reducer = createReducer(initialPalettesState, (builder) => {
 	builder
@@ -107,6 +110,19 @@ const reducer = createReducer(initialPalettesState, (builder) => {
 				state.ranks,
 				rankPalette(paletteId, state.paletteIds, state.closenesses)
 			);
+		})
+		.addCase(deleteAllColors, (state, action) => {
+			const { paletteId } = action.payload;
+			if (!state.paletteIds[paletteId]) {
+				throw new Error(`Palette with id ${paletteId} does not exist`);
+			}
+
+			for (const entryId of state.paletteIds[paletteId]) {
+				delete state.colors[entryId];
+				delete state.closenesses[entryId];
+				delete state.ranks[entryId];
+			}
+			state.paletteIds[paletteId] = [];
 		});
 });
 
@@ -143,6 +159,7 @@ export {
 	addColors,
 	changeColor,
 	deleteColor,
+	deleteAllColors,
 	reducer,
 	selectPaletteEntries,
 };
