@@ -21,7 +21,7 @@ const changeColor = createAction<{
 const deleteColor = createAction<{
 	paletteId: Id;
 	id: EntryId;
-}>("palette/removeColor");
+}>("palette/deleteColor");
 
 const reducer = createReducer(initialPalettesState, (builder) => {
 	builder
