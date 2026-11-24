@@ -1,62 +1,32 @@
 import Color from "colorjs.io";
-import { useState, useEffect, useRef, useMemo, memo } from "react";
+import { useState, useEffect, useContext, useRef, useMemo, memo } from "react";
 
-import { useAppDispatch, useAppSelector } from "@/app/hooks";
+import type { EntryId } from "@/features/palettes/lib/paletteIds";
+import { filter } from "@/features/palettes/lib/ranks";
+
 import outOfGamutUrl from "@/assets/svg/out-of-gamut.svg";
+import { useAppDispatch, useAppSelector } from "@/app/hooks";
 import { setDefaultEditSpace } from "@/features/defaultEditSpace";
-import { copyCssColorToClipboard } from "@/components/feature-select";
-
-import { toWeighted, deltaE } from "./closeness";
+import { addColor, changeColor, deleteColor } from "@/features/palettes/palette";
+import { PaletteContext } from "./PaletteContext";
 import "./Item.css";
 
 type ItemProps = {
+	id: EntryId;
 	color: cssColor;
 	rank: number | "-";
-	closeness: number;
-	setCloseness: (closeness: number) => void;
 	setIsEditing: (isEditing: boolean) => void;
-	deleteSelf: () => void;
 	style?: React.CSSProperties;
 };
 
 const Item = memo(
-	({
-		color,
-		rank,
-		closeness,
-		setCloseness,
-		setIsEditing,
-		deleteSelf,
-		style = {},
-	}: ItemProps) => {
-		const targetColor = useAppSelector((state) => state.targetColor);
-		const featureSpace = Color.spaces.oklab; // TODO: redux
-		const featureWeights: number[] = useMemo(() => [1, 0, 0], []); // TODO: redux
+	({ id, color, rank, setIsEditing, style = {} }: ItemProps) => {
+		const paletteId = useContext(PaletteContext);
+		const dispatch = useAppDispatch();
 
-		const featureColor: string = useMemo(
-			() => toWeighted(color, featureSpace, featureWeights),
-			[color, featureSpace, featureWeights]
-		);
-		const targetFeatureColor: string = useMemo(
-			() => toWeighted(targetColor, featureSpace, featureWeights),
-			[targetColor, featureSpace, featureWeights]
-		);
-		const newCloseness: number = useMemo(
-			() => deltaE(featureColor, targetFeatureColor),
-			[featureColor, targetFeatureColor]
-		);
-		useEffect(() => {
-			if (newCloseness !== closeness) {
-				setCloseness(newCloseness);
-			}
-		}, [color, closeness, newCloseness, setCloseness]);
-
-		const handleEdit = () => {
-			setIsEditing(true);
-		};
-		const handleCopy = () => {
-			copyCssColorToClipboard(color);
-		};
+		const f = useAppSelector((state) => state.palettes.filter);
+		const filteredColor = filter(color, f);
+		const filteredTarget = useAppSelector((state) => state.palettes.target);
 
 		const rankClass = useMemo(() => {
 			if (typeof rank !== "number") {
@@ -77,19 +47,21 @@ const Item = memo(
 				<div className={`rank ${rankClass}`}>
 					<p>{rank}</p>
 				</div>
-				<div className="feature-color" style={bg(featureColor)}>
+				<div className="filtered-color" style={bg(filteredColor)}>
 					<div
-						className="picked-color-overlay"
-						style={bg(targetFeatureColor)}></div>
+						className="target-color-overlay"
+						style={bg(filteredTarget)}></div>
 				</div>
 				<div className="color" style={bg(color)}></div>
-				<button className="edit" onClick={handleEdit}>
+				<button className="edit" onClick={() => setIsEditing(true)}>
 					<span className="icon">edit</span>
 				</button>
-				<button className="copy" onClick={handleCopy}>
+				<button className="copy" onClick={() => copyCssColorToClipboard(color)}>
 					<span className="icon">copy</span>
 				</button>
-				<button className="delete" onClick={deleteSelf}>
+				<button
+					className="delete"
+					onClick={() => dispatch(deleteColor({ paletteId, id }))}>
 					<span className="icon">delete</span>
 				</button>
 			</div>
@@ -205,6 +177,75 @@ function no0atEnd(value: string | undefined) {
 	return parseFloat(value);
 }
 
+type ItemWrapperProps = {
+	id: EntryId;
+	color: cssColor;
+	rank: number | "-";
+	style?: React.CSSProperties;
+};
+
+const ItemWrapper = memo(
+	({ id, color, rank, style = {} }: ItemWrapperProps) => {
+		const paletteId = useContext(PaletteContext);
+		const dispatch = useAppDispatch();
+		const [isEditing, setIsEditing] = useState(false);
+
+		if (isEditing) {
+			return (
+				<EditItem
+					initialColor={color}
+					submitColor={(color: cssColor) => {
+						setIsEditing(false);
+						dispatch(changeColor({ paletteId, id, color }));
+					}}
+					cancel={() => setIsEditing(false)}
+					style={style}
+				/>
+			);
+		} else {
+			return (
+				<Item
+					id={id}
+					color={color}
+					rank={rank}
+					setIsEditing={setIsEditing}
+					style={style}
+				/>
+			);
+		}
+	}
+);
+
+function NewItem({ style = {} }: { style?: React.CSSProperties }) {
+	const paletteId = useContext(PaletteContext);
+	const dispatch = useAppDispatch();
+	const [isEditing, setIsEditing] = useState(false);
+	const [savedInitialColor, saveInitialColor] = useState("#000000");
+
+	if (isEditing) {
+		return (
+			<EditItem
+				initialColor={savedInitialColor}
+				submitColor={(color: cssColor) => {
+					setIsEditing(false);
+					saveInitialColor(color);
+					dispatch(addColor({ paletteId, color }));
+				}}
+				cancel={() => setIsEditing(false)}
+				style={style}
+			/>
+		);
+	} else {
+		return (
+			<div className="item new" style={style}>
+				<button onClick={() => setIsEditing(true)}>
+					<span className="icon">add</span> Add Color
+				</button>
+			</div>
+		);
+	}
+}
+
 type ItemHeaderProps = {
 	style?: React.CSSProperties;
 	ref?: React.Ref<HTMLDivElement>;
@@ -223,110 +264,9 @@ const ItemHeader = memo(({ style = {}, ref }: ItemHeaderProps) => {
 	);
 });
 
-type ItemWrapperProps = {
-	index: number;
-	color: cssColor;
-	rank: number | "-";
-	closeness: number;
-	setCloseness: (closeness: number, index: number) => void;
-	setColor: (color: cssColor, index: number) => void;
-	removeColor: (index: number) => void;
-	style?: React.CSSProperties;
-};
-
-const ItemWrapper = memo(
-	({
-		index,
-		color,
-		rank,
-		closeness,
-		setColor,
-		setCloseness,
-		removeColor,
-		style = {},
-	}: ItemWrapperProps) => {
-		const [isEditing, setIsEditing] = useState(false);
-		const handleSetColor = (color: cssColor) => {
-			setIsEditing(false);
-			setColor(color, index);
-		};
-		const handleSetCloseness = (closeness: number) => {
-			setCloseness(closeness, index);
-		};
-		const cancelEdit = () => {
-			setIsEditing(false);
-		};
-		const deleteSelf = () => {
-			removeColor(index);
-		};
-
-		if (isEditing) {
-			return (
-				<EditItem
-					initialColor={color}
-					submitColor={handleSetColor}
-					cancel={cancelEdit}
-					style={style}
-				/>
-			);
-		}
-		return (
-			<Item
-				color={color}
-				rank={rank}
-				closeness={closeness}
-				setCloseness={handleSetCloseness}
-				setIsEditing={setIsEditing}
-				deleteSelf={deleteSelf}
-				style={style}
-			/>
-		);
-	}
-);
-
-type NewItemProps = {
-	addColor: (color: cssColor) => void;
-	style?: React.CSSProperties;
-};
-
-function NewItem({ addColor, style = {} }: NewItemProps) {
-	const [isEditing, setIsEditing] = useState(false);
-	const [savedInitialColor, saveInitialColor] = useState("#000000");
-
-	const startEdit = () => {
-		setIsEditing(true);
-	};
-	const cancelEdit = () => {
-		setIsEditing(false);
-	};
-	const handleAddColor = (color: cssColor) => {
-		setIsEditing(false);
-		saveInitialColor(color);
-		addColor(color);
-	};
-
-	if (isEditing) {
-		return (
-			<EditItem
-				initialColor={savedInitialColor}
-				submitColor={handleAddColor}
-				cancel={cancelEdit}
-				style={style}
-			/>
-		);
-	} else {
-		return (
-			<div className="item new" style={style}>
-				<button onClick={startEdit}>
-					<span className="icon">add</span> Add Color
-				</button>
-			</div>
-		);
-	}
-}
-
-export { ItemWrapper as Item, ItemHeader, NewItem };
 async function copyCssColorToClipboard(color: cssColor) {
 	await navigator.clipboard.writeText(new Color(color).display());
 }
+
+export { ItemWrapper as Item, NewItem, ItemHeader };
 export default ItemWrapper;

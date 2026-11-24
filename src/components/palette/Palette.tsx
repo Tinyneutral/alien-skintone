@@ -1,199 +1,288 @@
-import { useCallback, useRef, type SetStateAction } from "react";
+import { useState, useRef, useLayoutEffect, useMemo, useContext } from "react";
 import Color from "colorjs.io";
+import type { Id } from "@/features/palettes/lib/paletteIds";
+import type { PaletteEntry } from "@/features/palettes/palette";
 
-import ItemTable from "./ItemTable";
-import { useAppDispatch } from "@/app/hooks.ts";
-import { pickTargetColor } from "@/features/targetColor.ts";
-
-import { type PaletteData, INITIAL_CLOSENESS } from "./palette.ts";
+import { useAppDispatch } from "@/app/hooks";
+import { addColors } from "@/features/palettes/palette";
+import { ItemHeader, Item, NewItem } from "./Item";
+// import DevButtons from "./DevButtons";
+import { PaletteContext } from "./PaletteContext";
 import "./Palette.css";
-import { useAppSelector } from "@/app/hooks.ts";
 
 type PaletteProps = {
-	content: {
-		colors: cssColor[];
-		closenesses: number[];
-	};
-	setPaletteData: (paletteData: SetStateAction<PaletteData>) => void;
+	id: Id;
+	entries: PaletteEntry[];
 };
 
-function Palette({
-	content: { colors, closenesses },
-	setPaletteData,
-}: PaletteProps) {
+function Palette({ id, entries }: PaletteProps) {
+	const [possibleRows, setPossibleRowAmount] = useState(4);
 	const paletteRef = useRef<HTMLDivElement>(null);
+	const cellRef = useRef<HTMLDivElement>(null);
+	useLayoutEffect(() => {
+		if (!paletteRef.current) return;
+		let lastWidth = 0;
+		let timeoutId: ReturnType<typeof setTimeout>;
+
+		const observer = new ResizeObserver(([entry]) => {
+			if (!paletteRef.current || !cellRef.current) {
+				return;
+			}
+			const width = Math.round(entry.contentBoxSize[0].inlineSize);
+			if (width === lastWidth) {
+				return;
+			}
+			lastWidth = width;
+			console.log("width", width);
+
+			observer.unobserve(paletteRef.current);
+			clearTimeout(timeoutId);
+			timeoutId = setTimeout(() => {
+				if (paletteRef.current) {
+					observer.observe(paletteRef.current);
+				}
+			}, 333);
+
+			const style = getComputedStyle(cellRef.current);
+			const minCellWidth = parseFloat(style.minWidth);
+			const possibleNextRows = Math.max(Math.floor(width / minCellWidth), 1);
+			if (possibleNextRows === possibleRows) return;
+			console.log("possibleNextRows", possibleNextRows, "possibleRows", possibleRows);
+			setPossibleRowAmount(possibleNextRows);
+		});
+		observer.observe(paletteRef.current);
+		return () => {
+			observer.disconnect();
+			if (timeoutId) {
+				clearTimeout(timeoutId);
+			}
+		};
+	}, [possibleRows, paletteRef]);
+
+	return (
+		<PaletteContext.Provider value={id}>
+			<div className="palette" ref={paletteRef}>
+				<ItemTable
+					entries={entries}
+					possibleRows={possibleRows}
+					cellRef={cellRef}
+				/>
+				<DevButtons />
+			</div>
+		</PaletteContext.Provider>
+	);
+}
+
+type ItemTableProps = {
+	entries: PaletteEntry[];
+	possibleRows: number;
+	cellRef: React.RefObject<HTMLDivElement | null>;
+};
+
+function ItemTable({ entries, possibleRows, cellRef }: ItemTableProps) {
+	const [inputtedRows, setInputtedRowAmount] = useState(4);
+	const rows = useMemo(
+		() => Math.min(inputtedRows, possibleRows),
+		[inputtedRows, possibleRows]
+	);
+	const [groupCols, setGroupCols] = useState(8);
+	const groupItems = rows * groupCols;
+
+	const tableRow = (row: number) => {
+		const start = row * groupCols;
+		const trills = getTrills(start, groupCols, groupItems, entries.length - 1);
+		const isEndRow =
+			Math.floor((entries.length % groupItems) / groupCols) === row;
+		const style = {};
+
+		return [
+			...trills.map((trill) =>
+				trill.map((index) => (
+					<Item
+						key={`${index}`}
+						id={entries[index].id}
+						color={entries[index].color}
+						rank={entries[index].rank}
+						style={style}
+					/>
+				))
+			),
+			...(isEndRow ? [<NewItem key={`${row}-new`} style={style} />] : []),
+		];
+	};
+	const tableHeaderRow = (row: number) => {
+		const style = { gridColumnStart: row + 1 };
+		return (
+			<ItemHeader
+				key={`${row}-header`}
+				style={style}
+				ref={row === 0 ? cellRef : undefined}
+			/>
+		);
+	};
+
+	const rowRange = Array.from({ length: rows }, (_, row) => row);
+	const tableHeaderRows = rowRange.map(tableHeaderRow);
+	const tableRows = rowRange.map(tableRow);
+
+	return (
+		<>
+			<div className="table-config">
+				<label>
+					Rows:{" "}
+					<input
+						type="number"
+						value={inputtedRows}
+						min={1}
+						max={possibleRows}
+						step={1}
+						onChange={(e) => setInputtedRowAmount(parseInt(e.target.value))}
+					/>
+				</label>
+				<label>
+					Columns:{" "}
+					<input
+						type="number"
+						value={groupCols}
+						min={1}
+						max={99}
+						step={1}
+						onChange={(e) => setGroupCols(parseInt(e.target.value))}
+					/>{" "}
+					each
+				</label>
+			</div>
+			<div
+				className="table"
+				style={{ ["--rows"]: String(rows) } as React.CSSProperties}>
+				<div className="head">{tableHeaderRows.flat().map((item) => item)}</div>
+				<div className="body">
+					{tableRows.map((row, rowIndex) => (
+						<div key={rowIndex} className="row">
+							{row.map((item) => item)}
+						</div>
+					))}
+				</div>
+			</div>
+		</>
+	);
+}
+
+function getTrills(
+	start: number,
+	length: number,
+	step: number,
+	max: number
+): number[][] {
+	const trills: number[][] = [];
+	for (let i = start; i <= max; i += step) {
+		const trill: number[] = [];
+		for (let j = i; j < i + length; j++) {
+			if (j > max) {
+				break;
+			}
+			trill.push(j);
+		}
+		trills.push(trill);
+	}
+	return trills;
+}
+
+function DevButtons() {
+	const id = useContext(PaletteContext);
 	const dispatch = useAppDispatch();
-	const targetColor = useAppSelector((state) => state.targetColor);
-
-	const setColors = useCallback(
-		(colors: SetStateAction<cssColor[]>) => {
-			if (typeof colors === "function") {
-				setPaletteData((prev) => ({ ...prev, colors: colors(prev.colors) }));
-			} else {
-				setPaletteData((prev) => ({ ...prev, colors }));
-			}
-		},
-		[setPaletteData]
-	);
-	const setClosenesses = useCallback(
-		(closenesses: SetStateAction<number[]>) => {
-			if (typeof closenesses === "function") {
-				setPaletteData((prev) => ({
-					...prev,
-					closenesses: closenesses(prev.closenesses),
-				}));
-			} else {
-				setPaletteData((prev) => ({ ...prev, closenesses }));
-			}
-		},
-		[setPaletteData]
-	);
-	const ranks = getRanks(closenesses);
-
-	const addColor = (color: cssColor) => {
-		setColors((prev) => prev.concat(color));
-		setClosenesses((prev) => prev.concat(INITIAL_CLOSENESS));
-	};
-	const removeColor = (index: number) => {
-		setColors((prev) => prev.filter((_, i) => i !== index));
-		setClosenesses((prev) => prev.filter((_, i) => i !== index));
-	};
-	const setColor = (color: cssColor, index: number) => {
-		setColors((prev) => prev.toSpliced(index, 1, color));
-		setClosenesses((prev) => prev.toSpliced(index, 1, INITIAL_CLOSENESS));
-	};
-	const setCloseness = (closeness: number, index: number) => {
-		setClosenesses((prev) => prev.toSpliced(index, 1, closeness));
-	};
+	const dispatchAddColors = (colors: cssColor[]) =>
+		dispatch(addColors({ paletteId: id, colors }));
 
 	const handleInit = () => {
-		initPalette(addColor);
+		initPalette(dispatchAddColors);
 	};
 	const handleInit2 = () => {
-		initPalette2(addColor);
+		initPalette2(dispatchAddColors);
 	};
 	const handleInit3 = () => {
-		initPalette3(addColor);
+		initPalette3(dispatchAddColors);
 	};
 
 	return (
-		<div className="palette" ref={paletteRef}>
-			<ItemTable
-				colors={colors}
-				closenesses={closenesses}
-				ranks={ranks}
-				addColor={addColor}
-				removeColor={removeColor}
-				setColor={setColor}
-				setCloseness={setCloseness}
-				paletteRef={paletteRef}
-			/>
-			<div className="dev">
-				<p>
-					The buttons below are for demo use only. (There will be an "import
-					palette" button as an alternative.)
-				</p>
-				<p>
-					以下のボタンはデモ用で、完成版には含まれません。（完成版ではパレットを読み込む機能を実装する予定です。）
-				</p>
-				<div className="inputs">
-					<input
-						type="color"
-						value={targetColor}
-						onChange={(e) => dispatch(pickTargetColor(e.target.value))}
-					/>
-					<button onClick={handleInit}>Init Palette</button>
-					<button onClick={handleInit2}>Init Palette 2</button>
-					<label>
-						<button onClick={handleInit3}>The REAL Init Palette</button> palette
-						made by _izz_ ({" "}
-						<a
-							href="https://pin.it/69lsNiOWB"
-							target="_blank"
-							rel="noopener noreferrer">
-							Pinterest link
-						</a>{" "}
-						)
-					</label>
-				</div>
+		<div className="dev">
+			<p>
+				The buttons below are for demo use only. (There will be an "import
+				palette" button as an alternative.)
+			</p>
+			<p>
+				以下のボタンはデモ用で、完成版には含まれません。（完成版ではパレットを読み込む機能を実装する予定です。）
+			</p>
+			<div className="inputs">
+				<button onClick={handleInit}>Init Palette</button>
+				<button onClick={handleInit2}>Init Palette 2</button>
+				<label>
+					<button onClick={handleInit3}>The REAL Init Palette</button> palette
+					made by _izz_ ({" "}
+					<a
+						href="https://pin.it/69lsNiOWB"
+						target="_blank"
+						rel="noopener noreferrer">
+						Pinterest link
+					</a>{" "}
+					)
+				</label>
 			</div>
 		</div>
 	);
 }
 
-/**
- * Get ranks, closest first. Duplicates are marked as the same rank.
- * @param closenesses number[]
- */
-function getRanks(closenesses: number[]) {
-	const rankMap = closenesses
-		.map((closeness, index) => ({ index, closeness }))
-		.sort((a, b) => a.closeness - b.closeness)
-		.map((entry, index) => ({ ...entry, rank: index + 1 }));
-	const rankMapWithTies = rankMap;
-	for (let i = 1; i < rankMap.length; i++) {
-		const current = rankMapWithTies[i];
-		const prev = rankMapWithTies[i - 1];
-		if (current.closeness === prev.closeness) {
-			current.rank = prev.rank;
-		}
-	}
-	console.log(rankMapWithTies);
-	return rankMapWithTies
-		.sort((a, b) => a.index - b.index)
-		.map((entry) => entry.rank);
+function initPalette(addColors: (colors: cssColor[]) => void) {
+	addColors([
+		"#ff0000",
+		"#008000",
+		"#0000ff",
+		"#ffff00",
+		"#800080",
+		"#ffa500",
+		"#a52a2a",
+		"#808080",
+		"#000000",
+		"#ffffff",
+		"#ff0000",
+		"#008000",
+		"#0000ff",
+		"#ffff00",
+		"#800080",
+		"#ffa500",
+		"#a52a2a",
+		"#808080",
+		"#000000",
+		"#ffffff",
+		"#ff0000",
+		"#008000",
+		"#0000ff",
+		"#ffff00",
+		"#800080",
+		"#ffa500",
+		"#a52a2a",
+		"#808080",
+		"#000000",
+		"#ffffff",
+	]);
 }
 
-function initPalette(addColor: (color: cssColor) => void) {
-	const colors = [
-		"#ff0000",
-		"#008000",
-		"#0000ff",
-		"#ffff00",
-		"#800080",
-		"#ffa500",
-		"#a52a2a",
-		"#808080",
-		"#000000",
-		"#ffffff",
-		"#ff0000",
-		"#008000",
-		"#0000ff",
-		"#ffff00",
-		"#800080",
-		"#ffa500",
-		"#a52a2a",
-		"#808080",
-		"#000000",
-		"#ffffff",
-		"#ff0000",
-		"#008000",
-		"#0000ff",
-		"#ffff00",
-		"#800080",
-		"#ffa500",
-		"#a52a2a",
-		"#808080",
-		"#000000",
-		"#ffffff",
-	];
-	colors.forEach(addColor);
-}
-
-function initPalette2(addColor: (color: cssColor) => void) {
+function initPalette2(addColors: (colors: cssColor[]) => void) {
 	const rep = 10;
 	const color = new Color("red").to("srgb");
+	const colors = [];
 	for (let i = 0; i < rep; i++) {
 		for (let j = 0; j < rep; j++) {
 			color.set("r", i / (rep - 1));
 			color.set("g", j / (rep - 1));
-			addColor(color.display());
+			colors.push(color.display());
 		}
 	}
+	addColors(colors);
 }
 
-function initPalette3(addColor: (color: cssColor) => void) {
-	const colors = [
+function initPalette3(addColors: (colors: cssColor[]) => void) {
+	addColors([
 		"#fef4ec",
 		"#fdefe2",
 		"#fee4d3",
@@ -302,8 +391,7 @@ function initPalette3(addColor: (color: cssColor) => void) {
 		"#846a4f",
 		"#6c5744",
 		"#342c29",
-	];
-	colors.forEach((hex) => addColor(hex));
+	]);
 }
 
 export default Palette;

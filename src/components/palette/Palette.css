@@ -6,6 +6,61 @@
     align-items: flex-start;
     background-color: var(--primary);
 }
+.palette .table {
+		align-self: stretch;
+		max-width: calc(16rem * var(--rows) + 0.8rem * (var(--rows) - 1) + 0.2rem * 2);
+		display: flex;
+		flex-direction: column;
+		align-items: stretch;
+		padding: 0.4rem 0.2rem 0.6rem 0.2rem;
+		background-color: var(--white);
+}
+.palette .table .head,
+.palette .table .body {
+			width: 100%;
+			display: flex;
+			gap: 0.8rem;
+}
+.palette .table .head {
+		    border-bottom: max(0.08rem, 1px) solid var(--grey);
+}
+.palette .table .body {
+		    border-bottom: max(0.06rem, 1px) solid var(--grey);
+}
+.palette .table .body .row {
+				flex: 1 0 0;
+				height: fit-content;
+				display: flex;
+				flex-direction: column;
+				align-items: stretch;
+				gap: max(0.04rem, 1px);
+				background-color: var(--grey);
+}
+.palette .table-config {
+		display: flex;
+		align-items: center;
+		/* margin: 0 12px; */
+		padding: 0.4rem 0;
+		gap: 4px;
+		color: var(--secondary);
+}
+.palette .table-config label,
+.palette .table-config input {
+			display: flex;
+			align-items: center;
+			font-size: 0.8rem;
+			line-height: 1.2rem;
+			color: var(--secondary);
+}
+.palette .table-config label {
+			gap: 0.2rem;
+}
+.palette .table-config input {
+			justify-content: start;
+			text-align: left;
+			padding-left: 0.2rem;
+			background-color: var(--white);
+}
 .palette .dev {
         width: 100%;
         background-color: var(--primary-dull);
