@@ -326,4 +326,7 @@ function NewItem({ addColor, style = {} }: NewItemProps) {
 }
 
 export { ItemWrapper as Item, ItemHeader, NewItem };
+async function copyCssColorToClipboard(color: cssColor) {
+	await navigator.clipboard.writeText(new Color(color).display());
+}
 export default ItemWrapper;
