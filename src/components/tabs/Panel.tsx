@@ -1,4 +1,4 @@
-import { type ReactNode, useContext } from "react";
+import { type ReactNode, useContext, Activity } from "react";
 import { TabsContext } from "./TabsContext";
 
 type PanelProps = {
@@ -8,7 +8,11 @@ type PanelProps = {
 
 function Panel({ id, children }: PanelProps) {
 	const { activeId } = useContext(TabsContext);
-	return activeId === id && children;
+	return (
+		<Activity mode={activeId === id ? "visible" : "hidden"}>
+			{children}
+		</Activity>
+	);
 }
 
 export { Panel };

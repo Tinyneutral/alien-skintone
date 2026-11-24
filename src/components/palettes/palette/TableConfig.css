@@ -1,0 +1,28 @@
+.palette {
+    .table-config {
+        align-self: stretch;
+        display: flex;
+        align-items: center;
+        /* margin: 0 12px; */
+        padding: 0.4rem 0;
+        gap: 4px;
+        color: var(--secondary);
+    }
+    .table-config label,
+    .table-config input {
+            display: flex;
+            align-items: center;
+            font-size: 0.8rem;
+            line-height: 1.2rem;
+            color: var(--secondary);
+    }
+    .table-config label {
+            gap: 0.2rem;
+    }
+    .table-config input {
+            justify-content: start;
+            text-align: left;
+            padding-left: 0.2rem;
+            background-color: var(--white);
+    }
+}

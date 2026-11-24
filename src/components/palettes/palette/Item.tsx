@@ -7,7 +7,11 @@ import { filter } from "@/features/palettes/lib/ranks";
 import outOfGamutUrl from "@/assets/svg/out-of-gamut.svg";
 import { useAppDispatch, useAppSelector } from "@/app/hooks";
 import { setDefaultEditSpace } from "@/features/defaultEditSpace";
-import { addColor, changeColor, deleteColor } from "@/features/palettes/palette";
+import {
+	addColor,
+	changeColor,
+	deleteColor,
+} from "@/features/palettes/palette";
 import { PaletteContext } from "./PaletteContext";
 import "./Item.css";
 
@@ -16,72 +20,61 @@ type ItemProps = {
 	color: cssColor;
 	rank: number | "-";
 	setIsEditing: (isEditing: boolean) => void;
-	style?: React.CSSProperties;
 };
 
-const Item = memo(
-	({ id, color, rank, setIsEditing, style = {} }: ItemProps) => {
-		const paletteId = useContext(PaletteContext);
-		const dispatch = useAppDispatch();
+const Item = memo(({ id, color, rank, setIsEditing }: ItemProps) => {
+	const paletteId = useContext(PaletteContext);
+	const dispatch = useAppDispatch();
 
-		const f = useAppSelector((state) => state.palettes.filter);
-		const filteredColor = filter(color, f);
-		const filteredTarget = useAppSelector((state) => state.palettes.target);
+	const f = useAppSelector((state) => state.palettes.filter);
+	const filteredColor = filter(color, f);
+	const filteredTarget = useAppSelector((state) => state.palettes.target);
 
-		const rankClass = useMemo(() => {
-			if (typeof rank !== "number") {
-				return "none";
-			} else if (rank <= 3) {
-				return "great";
-			} else if (rank <= 10) {
-				return "good";
-			} else {
-				return "meh";
-			}
-		}, [rank]);
-		const bg = (color: cssColor): React.CSSProperties => {
-			return { backgroundColor: color };
-		};
-		return (
-			<div className="item" style={style}>
-				<div className={`rank ${rankClass}`}>
-					<p>{rank}</p>
-				</div>
-				<div className="filtered-color" style={bg(filteredColor)}>
-					<div
-						className="target-color-overlay"
-						style={bg(filteredTarget)}></div>
-				</div>
-				<div className="color" style={bg(color)}></div>
-				<button className="edit" onClick={() => setIsEditing(true)}>
-					<span className="icon">edit</span>
-				</button>
-				<button className="copy" onClick={() => copyCssColorToClipboard(color)}>
-					<span className="icon">copy</span>
-				</button>
-				<button
-					className="delete"
-					onClick={() => dispatch(deleteColor({ paletteId, id }))}>
-					<span className="icon">delete</span>
-				</button>
+	const rankClass = useMemo(() => {
+		if (typeof rank !== "number") {
+			return "none";
+		} else if (rank <= 3) {
+			return "great";
+		} else if (rank <= 10) {
+			return "good";
+		} else {
+			return "meh";
+		}
+	}, [rank]);
+	const bg = (color: cssColor): React.CSSProperties => {
+		return { backgroundColor: color };
+	};
+	return (
+		<div className="item">
+			<div className={`rank ${rankClass}`}>
+				<p>{rank}</p>
 			</div>
-		);
-	}
-);
+			<div className="filtered-color" style={bg(filteredColor)}>
+				<div className="target-color-overlay" style={bg(filteredTarget)}></div>
+			</div>
+			<div className="color" style={bg(color)}></div>
+			<button className="edit" onClick={() => setIsEditing(true)}>
+				<span className="icon">edit</span>
+			</button>
+			<button className="copy" onClick={() => copyCssColorToClipboard(color)}>
+				<span className="icon">copy</span>
+			</button>
+			<button
+				className="delete"
+				onClick={() => dispatch(deleteColor({ paletteId, id }))}>
+				<span className="icon">delete</span>
+			</button>
+		</div>
+	);
+});
 
 type EditItemProps = {
 	initialColor: cssColor;
 	submitColor: (color: cssColor) => void;
 	cancel: () => void;
-	style?: React.CSSProperties;
 };
 
-function EditItem({
-	initialColor,
-	submitColor,
-	cancel,
-	style = {},
-}: EditItemProps) {
+function EditItem({ initialColor, submitColor, cancel }: EditItemProps) {
 	const defaultSpace = useAppSelector((state) => state.defaultEditSpace);
 	const dispatch = useAppDispatch();
 	const [color, setColor] = useState(new Color(initialColor).to(defaultSpace));
@@ -111,7 +104,7 @@ function EditItem({
 		return { backgroundColor: color };
 	};
 	return (
-		<div className="edit-item-container" style={style}>
+		<div className="edit-item-container">
 			<div className="edit-item">
 				<div className="preview">
 					<div className="now" style={bg(color.display())}></div>
@@ -181,42 +174,32 @@ type ItemWrapperProps = {
 	id: EntryId;
 	color: cssColor;
 	rank: number | "-";
-	style?: React.CSSProperties;
 };
 
-const ItemWrapper = memo(
-	({ id, color, rank, style = {} }: ItemWrapperProps) => {
-		const paletteId = useContext(PaletteContext);
-		const dispatch = useAppDispatch();
-		const [isEditing, setIsEditing] = useState(false);
+const ItemWrapper = memo(({ id, color, rank }: ItemWrapperProps) => {
+	const paletteId = useContext(PaletteContext);
+	const dispatch = useAppDispatch();
+	const [isEditing, setIsEditing] = useState(false);
 
-		if (isEditing) {
-			return (
-				<EditItem
-					initialColor={color}
-					submitColor={(color: cssColor) => {
-						setIsEditing(false);
-						dispatch(changeColor({ paletteId, id, color }));
-					}}
-					cancel={() => setIsEditing(false)}
-					style={style}
-				/>
-			);
-		} else {
-			return (
-				<Item
-					id={id}
-					color={color}
-					rank={rank}
-					setIsEditing={setIsEditing}
-					style={style}
-				/>
-			);
-		}
+	if (isEditing) {
+		return (
+			<EditItem
+				initialColor={color}
+				submitColor={(color: cssColor) => {
+					setIsEditing(false);
+					dispatch(changeColor({ paletteId, id, color }));
+				}}
+				cancel={() => setIsEditing(false)}
+			/>
+		);
+	} else {
+		return (
+			<Item id={id} color={color} rank={rank} setIsEditing={setIsEditing} />
+		);
 	}
-);
+});
 
-function NewItem({ style = {} }: { style?: React.CSSProperties }) {
+function NewItem() {
 	const paletteId = useContext(PaletteContext);
 	const dispatch = useAppDispatch();
 	const [isEditing, setIsEditing] = useState(false);
@@ -232,12 +215,11 @@ function NewItem({ style = {} }: { style?: React.CSSProperties }) {
 					dispatch(addColor({ paletteId, color }));
 				}}
 				cancel={() => setIsEditing(false)}
-				style={style}
 			/>
 		);
 	} else {
 		return (
-			<div className="item new" style={style}>
+			<div className="item new">
 				<button onClick={() => setIsEditing(true)}>
 					<span className="icon">add</span> Add Color
 				</button>
@@ -247,13 +229,15 @@ function NewItem({ style = {} }: { style?: React.CSSProperties }) {
 }
 
 type ItemHeaderProps = {
-	style?: React.CSSProperties;
+	isTransparent?: boolean;
 	ref?: React.Ref<HTMLDivElement>;
 };
 
-const ItemHeader = memo(({ style = {}, ref }: ItemHeaderProps) => {
+const ItemHeader = memo(({ isTransparent, ref }: ItemHeaderProps) => {
 	return (
-		<div className="item header" style={style} ref={ref}>
+		<div
+			className={`item header${isTransparent ? " transparent" : ""}`}
+			ref={ref}>
 			<div className="rank">
 				<p>Rank</p>
 			</div>

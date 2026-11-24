@@ -1,74 +1,10 @@
-import { useState } from "react";
-import { useAppSelector, useAppDispatch } from "@/app/hooks";
-import { addPalette, deletePalette } from "@/features/palettes/palettes";
-import { selectPaletteEntries } from "@/features/palettes/palette";
-
-import Tabs from "@/components/tabs";
-import Palette from "@/components/palette/Palette.tsx";
-import PalettePreview from "@/components/palette/Preview";
-
+import Palettes from "@/components/palettes/Palettes.tsx";
 import "./App.css";
 
 function App() {
 	return (
-		<>
-			<PaletteWithTabs />
-		</>
-	);
-}
-
-function PaletteWithTabs() {
-	const dispatch = useAppDispatch();
-	const paletteEntries = useAppSelector(selectPaletteEntries);
-	const paletteIds = useAppSelector((state) => state.palettes.paletteIds);
-	const colors = useAppSelector((state) => state.palettes.colors);
-
-	const [activeId, setActiveId] = useState(0);
-	const nextIdPeek = useAppSelector((state) => state.palettes._nextId("peek"));
-
-	return (
 		<div className="app">
-			<section className="palettes">
-				<h2>Palettes</h2>
-				<Tabs.Root activeIdOverride={{ activeId, setActiveId }}>
-					<Tabs.List>
-						{Object.entries(paletteIds).map(([sId, entries]) => {
-							const id = parseInt(sId);
-							return (
-								<Tabs.Tab
-									key={id}
-									id={id}
-									label={entries.length.toString()}
-									onClose={() => {
-										dispatch(deletePalette(id));
-									}}>
-									<PalettePreview
-										colors6={paletteIds[id]
-											.slice(0, 6)
-											.map((entry) => colors[entry])}
-									/>
-								</Tabs.Tab>
-							);
-						})}
-						<Tabs.NewTab
-							onNewTab={() => {
-								dispatch(addPalette());
-								setActiveId(nextIdPeek);
-							}}
-							text="New Palette">
-							<PalettePreview colors6={[]} />
-						</Tabs.NewTab>
-					</Tabs.List>
-					{Object.entries(paletteIds).map(([sId]) => {
-						const id = parseInt(sId);
-						return (
-							<Tabs.Panel key={id} id={id}>
-								<Palette id={id} entries={paletteEntries[id]} />
-							</Tabs.Panel>
-						);
-					})}
-				</Tabs.Root>
-			</section>
+			<Palettes />
 			<div className="dev">
 				<div className="row" style={{ width: "33%" }}>
 					<p>
