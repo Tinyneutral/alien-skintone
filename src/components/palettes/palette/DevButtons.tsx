@@ -1,6 +1,4 @@
 import { useContext } from "react";
-import Color from "colorjs.io";
-
 import { useAppDispatch } from "@/app/hooks";
 import { addColors } from "@/features/palettes/palette";
 import { PaletteContext } from "./PaletteContext";
@@ -15,12 +13,6 @@ function DevButtons() {
 	const handleInit = () => {
 		initPalette(dispatchAddColors);
 	};
-	const handleInit2 = () => {
-		initPalette2(dispatchAddColors);
-	};
-	const handleInit3 = () => {
-		initPalette3(dispatchAddColors);
-	};
 
 	return (
 		<div className="dev">
@@ -32,10 +24,8 @@ function DevButtons() {
 				以下のボタンはデモ用で、完成版には含まれません。（完成版ではパレットを読み込む機能を実装する予定です。）
 			</p>
 			<div className="inputs">
-				<button onClick={handleInit}>Init Palette</button>
-				<button onClick={handleInit2}>Init Palette 2</button>
 				<label>
-					<button onClick={handleInit3}>The REAL Init Palette</button> palette
+					<button onClick={handleInit}>Init Palette</button> palette
 					made by _izz_ ({" "}
 					<a
 						href="https://pin.it/69lsNiOWB"
@@ -51,55 +41,6 @@ function DevButtons() {
 }
 
 function initPalette(addColors: (colors: cssColor[]) => void) {
-	addColors([
-		"#ff0000",
-		"#008000",
-		"#0000ff",
-		"#ffff00",
-		"#800080",
-		"#ffa500",
-		"#a52a2a",
-		"#808080",
-		"#000000",
-		"#ffffff",
-		"#ff0000",
-		"#008000",
-		"#0000ff",
-		"#ffff00",
-		"#800080",
-		"#ffa500",
-		"#a52a2a",
-		"#808080",
-		"#000000",
-		"#ffffff",
-		"#ff0000",
-		"#008000",
-		"#0000ff",
-		"#ffff00",
-		"#800080",
-		"#ffa500",
-		"#a52a2a",
-		"#808080",
-		"#000000",
-		"#ffffff",
-	]);
-}
-
-function initPalette2(addColors: (colors: cssColor[]) => void) {
-	const rep = 10;
-	const color = new Color("red").to("srgb");
-	const colors = [];
-	for (let i = 0; i < rep; i++) {
-		for (let j = 0; j < rep; j++) {
-			color.set("r", i / (rep - 1));
-			color.set("g", j / (rep - 1));
-			colors.push(color.display());
-		}
-	}
-	addColors(colors);
-}
-
-function initPalette3(addColors: (colors: cssColor[]) => void) {
 	addColors([
 		"#fef4ec",
 		"#fdefe2",

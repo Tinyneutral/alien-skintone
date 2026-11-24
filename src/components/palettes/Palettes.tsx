@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useAppSelector, useAppDispatch } from "@/app/hooks";
 import { addPalette, deletePalette } from "@/features/palettes/palettes";
-import { selectPaletteEntries } from "@/features/palettes/palette";
+import { deleteAllColors, selectPaletteEntries } from "@/features/palettes/palette";
 
 import Tabs from "@/components/tabs";
 import Palette from "./palette/index";
@@ -17,7 +17,7 @@ function Palettes() {
 	const nextIdPeek = useAppSelector((state) => state.palettes._nextId("peek"));
 
 	const [rows, setRowAmount] = useState(4);
-	const [groupCols, setGroupColAmount] = useState(8);
+	const [groupCols, setGroupColAmount] = useState(9);
 
 	return (
 		<section className="palettes">
@@ -32,7 +32,15 @@ function Palettes() {
 								id={id}
 								label={entries.length.toString()}
 								onClose={() => {
+                                    const ids = Object.keys(paletteIds).map(Number);
+                                    if (ids.length === 1) {
+                                        dispatch(deleteAllColors({ paletteId: id }));
+                                        return;
+                                    }
 									dispatch(deletePalette(id));
+                                    if (id === activeId) {
+                                        setActiveId(ids.filter(id => id !== activeId)[0]);
+                                    }
 								}}>
 								<PalettePreview
 									colors6={paletteIds[id]
