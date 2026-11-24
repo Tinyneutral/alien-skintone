@@ -8,9 +8,7 @@ import {
 import { type Id, type EntryId } from "./lib/paletteIds";
 import { closeness, type Closeness, filter, type Rank } from "./lib/ranks";
 
-const pickTargetColor = createAction<cssColor>(
-	"targetColor/pickTargetColor"
-);
+const pickTargetColor = createAction<cssColor>("targetColor/pickTargetColor");
 
 const reducer = createReducer(initialPalettesState, (builder) => {
 	builder.addCase(pickTargetColor, (state, action) => {

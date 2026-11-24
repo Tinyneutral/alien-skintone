@@ -17,7 +17,7 @@ const rootReducer = reduceReducers(
 	palettesReducer,
 	paletteReducer,
 	targetColorReducer,
-	filterReducer,
+	filterReducer
 ) as Reducer<Palettes>;
 
 export { rootReducer as palettesReducer };
