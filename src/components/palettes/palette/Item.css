@@ -99,6 +99,10 @@
 		display: flex;
 		align-items: flex-end;
 	}
+	.item.header.transparent {
+		opacity: 0;
+		pointer-events: none;
+	}
 	.item.header .rank,
 	.item.header .color {
 		height: 100%;

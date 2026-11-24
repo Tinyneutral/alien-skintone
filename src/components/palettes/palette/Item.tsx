@@ -7,7 +7,11 @@ import { filter } from "@/features/palettes/lib/ranks";
 import outOfGamutUrl from "@/assets/svg/out-of-gamut.svg";
 import { useAppDispatch, useAppSelector } from "@/app/hooks";
 import { setDefaultEditSpace } from "@/features/defaultEditSpace";
-import { addColor, changeColor, deleteColor } from "@/features/palettes/palette";
+import {
+	addColor,
+	changeColor,
+	deleteColor,
+} from "@/features/palettes/palette";
 import { PaletteContext } from "./PaletteContext";
 import "./Item.css";
 
@@ -18,55 +22,51 @@ type ItemProps = {
 	setIsEditing: (isEditing: boolean) => void;
 };
 
-const Item = memo(
-	({ id, color, rank, setIsEditing }: ItemProps) => {
-		const paletteId = useContext(PaletteContext);
-		const dispatch = useAppDispatch();
+const Item = memo(({ id, color, rank, setIsEditing }: ItemProps) => {
+	const paletteId = useContext(PaletteContext);
+	const dispatch = useAppDispatch();
 
-		const f = useAppSelector((state) => state.palettes.filter);
-		const filteredColor = filter(color, f);
-		const filteredTarget = useAppSelector((state) => state.palettes.target);
+	const f = useAppSelector((state) => state.palettes.filter);
+	const filteredColor = filter(color, f);
+	const filteredTarget = useAppSelector((state) => state.palettes.target);
 
-		const rankClass = useMemo(() => {
-			if (typeof rank !== "number") {
-				return "none";
-			} else if (rank <= 3) {
-				return "great";
-			} else if (rank <= 10) {
-				return "good";
-			} else {
-				return "meh";
-			}
-		}, [rank]);
-		const bg = (color: cssColor): React.CSSProperties => {
-			return { backgroundColor: color };
-		};
-		return (
-			<div className="item">
-				<div className={`rank ${rankClass}`}>
-					<p>{rank}</p>
-				</div>
-				<div className="filtered-color" style={bg(filteredColor)}>
-					<div
-						className="target-color-overlay"
-						style={bg(filteredTarget)}></div>
-				</div>
-				<div className="color" style={bg(color)}></div>
-				<button className="edit" onClick={() => setIsEditing(true)}>
-					<span className="icon">edit</span>
-				</button>
-				<button className="copy" onClick={() => copyCssColorToClipboard(color)}>
-					<span className="icon">copy</span>
-				</button>
-				<button
-					className="delete"
-					onClick={() => dispatch(deleteColor({ paletteId, id }))}>
-					<span className="icon">delete</span>
-				</button>
+	const rankClass = useMemo(() => {
+		if (typeof rank !== "number") {
+			return "none";
+		} else if (rank <= 3) {
+			return "great";
+		} else if (rank <= 10) {
+			return "good";
+		} else {
+			return "meh";
+		}
+	}, [rank]);
+	const bg = (color: cssColor): React.CSSProperties => {
+		return { backgroundColor: color };
+	};
+	return (
+		<div className="item">
+			<div className={`rank ${rankClass}`}>
+				<p>{rank}</p>
 			</div>
-		);
-	}
-);
+			<div className="filtered-color" style={bg(filteredColor)}>
+				<div className="target-color-overlay" style={bg(filteredTarget)}></div>
+			</div>
+			<div className="color" style={bg(color)}></div>
+			<button className="edit" onClick={() => setIsEditing(true)}>
+				<span className="icon">edit</span>
+			</button>
+			<button className="copy" onClick={() => copyCssColorToClipboard(color)}>
+				<span className="icon">copy</span>
+			</button>
+			<button
+				className="delete"
+				onClick={() => dispatch(deleteColor({ paletteId, id }))}>
+				<span className="icon">delete</span>
+			</button>
+		</div>
+	);
+});
 
 type EditItemProps = {
 	initialColor: cssColor;
@@ -74,11 +74,7 @@ type EditItemProps = {
 	cancel: () => void;
 };
 
-function EditItem({
-	initialColor,
-	submitColor,
-	cancel,
-}: EditItemProps) {
+function EditItem({ initialColor, submitColor, cancel }: EditItemProps) {
 	const defaultSpace = useAppSelector((state) => state.defaultEditSpace);
 	const dispatch = useAppDispatch();
 	const [color, setColor] = useState(new Color(initialColor).to(defaultSpace));
@@ -180,35 +176,28 @@ type ItemWrapperProps = {
 	rank: number | "-";
 };
 
-const ItemWrapper = memo(
-	({ id, color, rank }: ItemWrapperProps) => {
-		const paletteId = useContext(PaletteContext);
-		const dispatch = useAppDispatch();
-		const [isEditing, setIsEditing] = useState(false);
+const ItemWrapper = memo(({ id, color, rank }: ItemWrapperProps) => {
+	const paletteId = useContext(PaletteContext);
+	const dispatch = useAppDispatch();
+	const [isEditing, setIsEditing] = useState(false);
 
-		if (isEditing) {
-			return (
-				<EditItem
-					initialColor={color}
-					submitColor={(color: cssColor) => {
-						setIsEditing(false);
-						dispatch(changeColor({ paletteId, id, color }));
-					}}
-					cancel={() => setIsEditing(false)}
-				/>
-			);
-		} else {
-			return (
-				<Item
-					id={id}
-					color={color}
-					rank={rank}
-					setIsEditing={setIsEditing}
-				/>
-			);
-		}
+	if (isEditing) {
+		return (
+			<EditItem
+				initialColor={color}
+				submitColor={(color: cssColor) => {
+					setIsEditing(false);
+					dispatch(changeColor({ paletteId, id, color }));
+				}}
+				cancel={() => setIsEditing(false)}
+			/>
+		);
+	} else {
+		return (
+			<Item id={id} color={color} rank={rank} setIsEditing={setIsEditing} />
+		);
 	}
-);
+});
 
 function NewItem() {
 	const paletteId = useContext(PaletteContext);
@@ -240,12 +229,15 @@ function NewItem() {
 }
 
 type ItemHeaderProps = {
+	isTransparent?: boolean;
 	ref?: React.Ref<HTMLDivElement>;
 };
 
-const ItemHeader = memo(({ ref }: ItemHeaderProps) => {
+const ItemHeader = memo(({ isTransparent, ref }: ItemHeaderProps) => {
 	return (
-		<div className="item header" ref={ref}>
+		<div
+			className={`item header${isTransparent ? " transparent" : ""}`}
+			ref={ref}>
 			<div className="rank">
 				<p>Rank</p>
 			</div>

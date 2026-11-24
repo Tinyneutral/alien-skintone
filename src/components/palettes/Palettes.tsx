@@ -4,7 +4,7 @@ import { addPalette, deletePalette } from "@/features/palettes/palettes";
 import { selectPaletteEntries } from "@/features/palettes/palette";
 
 import Tabs from "@/components/tabs";
-import Palette from "@/components/palettes/Palette.tsx";
+import Palette from "./palette/index";
 import PalettePreview from "@/components/palettes/Preview.tsx";
 
 function Palettes() {
@@ -16,48 +16,61 @@ function Palettes() {
 	const [activeId, setActiveId] = useState(0);
 	const nextIdPeek = useAppSelector((state) => state.palettes._nextId("peek"));
 
+	const [rows, setRowAmount] = useState(4);
+	const [groupCols, setGroupColAmount] = useState(8);
+
 	return (
-			<section className="palettes">
-				<h2>Palettes</h2>
-				<Tabs.Root activeIdOverride={{ activeId, setActiveId }}>
-					<Tabs.List>
-						{Object.entries(paletteIds).map(([sId, entries]) => {
-							const id = parseInt(sId);
-							return (
-								<Tabs.Tab
-									key={id}
-									id={id}
-									label={entries.length.toString()}
-									onClose={() => {
-										dispatch(deletePalette(id));
-									}}>
-									<PalettePreview
-										colors6={paletteIds[id]
-											.slice(0, 6)
-											.map((entry) => colors[entry])}
-									/>
-								</Tabs.Tab>
-							);
-						})}
-						<Tabs.NewTab
-							onNewTab={() => {
-								dispatch(addPalette());
-								setActiveId(nextIdPeek);
-							}}
-							text="New Palette">
-							<PalettePreview colors6={[]} />
-						</Tabs.NewTab>
-					</Tabs.List>
-					{Object.entries(paletteIds).map(([sId]) => {
+		<section className="palettes">
+			<h2>Palettes</h2>
+			<Tabs.Root activeIdOverride={{ activeId, setActiveId }}>
+				<Tabs.List>
+					{Object.entries(paletteIds).map(([sId, entries]) => {
 						const id = parseInt(sId);
 						return (
-							<Tabs.Panel key={id} id={id}>
-								<Palette id={id} entries={paletteEntries[id]} />
-							</Tabs.Panel>
+							<Tabs.Tab
+								key={id}
+								id={id}
+								label={entries.length.toString()}
+								onClose={() => {
+									dispatch(deletePalette(id));
+								}}>
+								<PalettePreview
+									colors6={paletteIds[id]
+										.slice(0, 6)
+										.map((entry) => colors[entry])}
+								/>
+							</Tabs.Tab>
 						);
 					})}
-				</Tabs.Root>
-			</section>
+					<Tabs.NewTab
+						onNewTab={() => {
+							dispatch(addPalette());
+							setActiveId(nextIdPeek);
+						}}
+						text="New Palette">
+						<PalettePreview colors6={[]} />
+					</Tabs.NewTab>
+				</Tabs.List>
+				{Object.entries(paletteIds).map(([sId]) => {
+					const id = parseInt(sId);
+					return (
+						<Tabs.Panel key={id} id={id}>
+							<Palette.Root id={id}>
+								<Palette.TableConfig
+									rowState={{ rows, setRowAmount }}
+									groupColsState={{ groupCols, setGroupColAmount }}
+								/>
+								<Palette.ItemTable
+									entries={paletteEntries[id]}
+									rows={rows}
+									groupCols={groupCols}
+								/>
+							</Palette.Root>
+						</Tabs.Panel>
+					);
+				})}
+			</Tabs.Root>
+		</section>
 	);
 }
 
