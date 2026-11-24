@@ -17,7 +17,7 @@ function Palettes() {
 	const nextIdPeek = useAppSelector((state) => state.palettes._nextId("peek"));
 
 	const [rows, setRowAmount] = useState(4);
-	const [groupCols, setGroupColAmount] = useState(8);
+	const [groupCols, setGroupColAmount] = useState(9);
 
 	return (
 		<section className="palettes">
