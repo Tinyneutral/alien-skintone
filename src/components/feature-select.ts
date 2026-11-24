@@ -194,14 +194,6 @@ export function getCoordStrengths() {
 }
 
 /**
- * @param {cssColor} color
- * @returns {Promise<void>}
- */
-export async function copyCssColorToClipboard(color: cssColor) {
-	await navigator.clipboard.writeText(new Color(color).display());
-}
-
-/**
  * @returns {string[]}
  */
 export function getSpaces() {

@@ -63,13 +63,13 @@
 			flex: 1 0 0;
 			border-left: var(--rank-border);
 	}
-	.item .feature-color {
+	.item .filtered-color {
 			width: 1.25rem;
 			display: flex;
 			align-items: stretch;
 			justify-content: center;
 	}
-	.item .feature-color .picked-color-overlay {
+	.item .filtered-color .target-color-overlay {
 				width: calc(100% / 3);
 	}
 	.item button {

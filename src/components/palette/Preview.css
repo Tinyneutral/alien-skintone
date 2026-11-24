@@ -1,0 +1,21 @@
+.new-tab:has(.palette-preview),
+.tab:has(.palette-preview) {
+    --preview-width: calc(20px * 3);
+    --preview-height: calc(20px * 2 - 6px);
+}
+
+.tab .palette-preview {
+        display: flex;
+        flex-flow: row wrap-reverse;
+        width: var(--preview-width);
+        height: var(--preview-height);
+        overflow: hidden;
+        background-color: var(--primary-duller);
+}
+.tab.active .palette-preview {
+        background-color: var(--primary-dull);
+}
+.tab .palette-preview .color {
+            width: 20px;
+            height: 20px;
+}
