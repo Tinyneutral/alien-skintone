@@ -83,7 +83,9 @@
 		font-size: 16px;
 	}
 
-	width: 100vw;
+	position: absolute;
+	left: 0;
+	right: 0;
 }
 /* 
 @media (prefers-color-scheme: dark) {

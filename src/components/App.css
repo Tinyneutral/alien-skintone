@@ -1,0 +1,5 @@
+.app .break {
+    width: 0;
+    height: calc(1.25rem * 0.5);
+    background-color: var(--primary);
+}
