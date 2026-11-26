@@ -16,14 +16,8 @@ function DevButtons() {
 
 	return (
 		<div className="dev">
+			<p>DEMO ONLY</p>
 			<p>
-				The buttons below are for demo use only. (There will be an "import
-				palette" button as an alternative.)
-			</p>
-			<p>
-				以下のボタンはデモ用で、完成版には含まれません。（完成版ではパレットを読み込む機能を実装する予定です。）
-			</p>
-			<div className="inputs">
 				<label>
 					<button onClick={handleInit}>Init Palette</button> palette made by
 					_izz_ ({" "}
@@ -35,7 +29,7 @@ function DevButtons() {
 					</a>{" "}
 					)
 				</label>
-			</div>
+			</p>
 		</div>
 	);
 }
