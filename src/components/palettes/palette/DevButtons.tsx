@@ -1,7 +1,8 @@
-import { useContext } from "react";
+import { useContext, useRef } from "react";
 import { useAppDispatch } from "@/app/hooks";
 import { addColors } from "@/features/palettes/palette";
 import { PaletteContext } from "./PaletteContext";
+import { extractPalette } from "./extractFromPhoto";
 import "./DevButtons.css";
 
 function DevButtons() {
@@ -12,6 +13,17 @@ function DevButtons() {
 
 	const handleInit = () => {
 		initPalette(dispatchAddColors);
+	};
+	const importImageInputRef = useRef<HTMLInputElement>(null);
+	const handleImportImage = async (
+		event: React.ChangeEvent<HTMLInputElement>
+	) => {
+		const file = event.target.files?.[0];
+		if (file) {
+			const colors = await extractPalette(file);
+			dispatchAddColors(colors);
+		}
+		event.target.value = "";
 	};
 
 	return (
@@ -28,6 +40,22 @@ function DevButtons() {
 						Pinterest link
 					</a>{" "}
 					)
+				</label>
+			</p>
+			<p>
+				<label>
+					<button
+						type="button"
+						onClick={() => importImageInputRef.current?.click()}>
+						Import Palette from Image
+					</button>
+					<input
+						ref={importImageInputRef}
+						type="file"
+						accept="image/*"
+						onChange={handleImportImage}
+						hidden
+					/>
 				</label>
 			</p>
 		</div>
