@@ -21,7 +21,7 @@ type Ranks = {
 const initialRanks: Ranks = {
 	ranks: {},
 	closenesses: {},
-	target: "#000000",
+	target: "#949494",
 	filter: {
 		space: Color.spaces.oklab,
 		weights: [1, 0, 0],

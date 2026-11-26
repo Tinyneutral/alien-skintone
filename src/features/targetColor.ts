@@ -1,6 +1,6 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 
-const initialState: cssColor = "#ffffff";
+const initialState: cssColor = "#2caf5a";
 
 const targetColorSlice = createSlice({
 	name: "targetColor",
