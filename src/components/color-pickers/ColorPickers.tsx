@@ -25,7 +25,6 @@ function ColorPickers() {
 				<HumanColorPicker colors10={top10Colors} />
 			</div>
 		</section>
-		
 	);
 }
 

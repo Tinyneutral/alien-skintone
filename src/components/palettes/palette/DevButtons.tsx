@@ -25,8 +25,8 @@ function DevButtons() {
 			</p>
 			<div className="inputs">
 				<label>
-					<button onClick={handleInit}>Init Palette</button> palette
-					made by _izz_ ({" "}
+					<button onClick={handleInit}>Init Palette</button> palette made by
+					_izz_ ({" "}
 					<a
 						href="https://pin.it/69lsNiOWB"
 						target="_blank"
