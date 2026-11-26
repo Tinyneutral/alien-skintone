@@ -1,4 +1,4 @@
-.app > .dev {
+.app .demo-info {
     background-color: var(--bg-dull);
     color: var(--primary-dull);
     margin-top: 0.8rem;
@@ -9,14 +9,28 @@
     flex-direction: row;
     gap: 0.6rem;
 }
-.app > .dev .row p {
+.app .demo-info .jp,
+.app .demo-info .en {
+    width: 50%;
+}
+@media (max-width: 500px) {
+    .app .demo-info {
+        flex-direction: column;
+    }
+    .app .demo-info .jp,
+    .app .demo-info .en {
+        width: 100%;
+    }
+}
+.app .demo-info .jp p,
+.app .demo-info .en p {
     font-size: 0.72rem;
     line-height: 1.4;
     text-wrap: pretty;
 }
-.app > .dev .row.jp p {
+.app .demo-info .jp p {
     line-height: 1.6;
 }
-.app > .dev .row p:not(:first-child) {
+.app .demo-info .row p:not(:first-child) {
     text-indent: 1em;
 }
