@@ -3,3 +3,17 @@
     height: calc(1.25rem * 0.5);
     background-color: var(--primary);
 }
+.app footer {
+    display: flex;
+    justify-content: center;
+    margin-top: 1.2rem;
+}
+.app footer p {
+    font-size: 0.72rem;
+    line-height: 1.66;
+    text-align: center;
+    color: var(--primary-duller);
+}
+.app footer a {
+    color: var(--accent);
+}
