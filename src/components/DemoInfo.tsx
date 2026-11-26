@@ -3,33 +3,33 @@ import "./DemoInfo.css";
 function DemoInfo() {
 	return (
 		<div className="dev">
-            <div className="row" style={{ width: "33%" }}>
-                <p>
-                    This is a demo program. This is a part of Alien-skintone, a color
-                    comparer for humanization. This program aids comparing non-human
-                    skin with human skintones, by showing a closeness-in-filter
-                    (currently grayscale) ranking in the skintone palette. Above is the
-                    palette portion.
-                    <br />
-                    P.S.: The filter will be customizable in the final version.
-                </p>
-            </div>
-            <div className="row jp" style={{ width: "25em" }}>
-                <p>
-                    本作は、擬人化用の色比較ツール「Alien-skintone」の一部のデモです。
-                </p>
-                <p>
-                    このツールは非人間の肌と人間の肌パレットにフィルターをかけ、近い
-                    <br />
-                    順で順位をつけます。本作は、そのうち人間の肌パレットに当たります。
-                </p>
-                <p>
-                    本作のフィルターはグレースケールのみですが、完成版ではカスタマイズ
-                    <br />
-                    可能にする予定です。
-                </p>
-            </div>
-        </div>
+			<div className="row" style={{ width: "33%" }}>
+				<p>
+					This is a demo program. This is a part of Alien-skintone, a color
+					comparer for humanization. This program aids comparing non-human skin
+					with human skintones, by showing a closeness-in-filter (currently
+					grayscale) ranking in the skintone palette. Above is the palette
+					portion.
+					<br />
+					P.S.: The filter will be customizable in the final version.
+				</p>
+			</div>
+			<div className="row jp" style={{ width: "25em" }}>
+				<p>
+					本作は、擬人化用の色比較ツール「Alien-skintone」の一部のデモです。
+				</p>
+				<p>
+					このツールは非人間の肌と人間の肌パレットにフィルターをかけ、近い
+					<br />
+					順で順位をつけます。本作は、そのうち人間の肌パレットに当たります。
+				</p>
+				<p>
+					本作のフィルターはグレースケールのみですが、完成版ではカスタマイズ
+					<br />
+					可能にする予定です。
+				</p>
+			</div>
+		</div>
 	);
 }
 
