@@ -14,7 +14,9 @@ function App() {
 				<Palettes />
 				<p className="break"> </p>
 				<ColorPickers />
+				<p className="break"> </p>
 				<DemoInfo />
+				<Footer />
 			</div>
 		</ActivePaletteIdContext.Provider>
 	);
@@ -48,6 +50,18 @@ function DemoInfo() {
 				</p>
 			</div>
 		</div>
+	);
+}
+
+function Footer() {
+	return (
+		<footer>
+			<p>
+				Alien-skintone by{" "}
+				<a href="https://github.com/alien-skintone">Tinyneutral</a>. All rights
+				reserved.
+			</p>
+		</footer>
 	);
 }
 

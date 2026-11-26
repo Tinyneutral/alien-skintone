@@ -3,6 +3,43 @@
     height: calc(1.25rem * 0.5);
     background-color: var(--primary);
 }
+.app .demo-info {
+    background-color: var(--bg-dull);
+    color: var(--primary-dull);
+    margin-top: 0.8rem;
+    width: 100%;
+    padding: 0.2rem 0.4rem;
+    font-weight: 500;
+    display: flex;
+    flex-direction: row;
+    gap: 0.6rem;
+}
+.app .demo-info .jp,
+.app .demo-info .en {
+    width: 50%;
+    max-width: 25rem;
+}
+@media (max-width: 500px) {
+    .app .demo-info {
+        flex-direction: column;
+    }
+    .app .demo-info .jp,
+    .app .demo-info .en {
+        width: 100%;
+    }
+}
+.app .demo-info .jp p,
+.app .demo-info .en p {
+    font-size: 0.72rem;
+    line-height: 1.4;
+    text-wrap: pretty;
+}
+.app .demo-info .jp p {
+    line-height: 1.6;
+}
+.app .demo-info .row p:not(:first-child) {
+    text-indent: 1em;
+}
 .app footer {
     display: flex;
     justify-content: center;
