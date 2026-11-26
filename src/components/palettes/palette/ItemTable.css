@@ -4,8 +4,10 @@
     display: flex;
     flex-direction: column;
     align-items: stretch;
-    padding: 0.4rem 0.2rem 0.6rem 0.2rem;
+    border: 0.2rem solid var(--white);
+    padding: 0.2rem 0 0.4rem;
     background-color: var(--white);
+    overflow-x: hidden;
 }
 .palette .table .head,
 .palette .table .body {
