@@ -2,6 +2,9 @@ import { useState, useRef, useLayoutEffect, useMemo, useEffect } from "react";
 import { ItemHeader } from "./Item.tsx";
 import "./TableConfig.css";
 
+const GAP_REM = 0.8;
+const BORDER_REM = 0.6;
+
 type TableConfigProps = {
 	rowState: {
 		rows: number;
@@ -17,13 +20,14 @@ function TableConfig({ rowState, groupColsState }: TableConfigProps) {
 	const [possibleRows, setPossibleRowAmount] = useState(4);
 	const maxWidthRef = useRef<HTMLDivElement>(null);
 	const cellRef = useRef<HTMLDivElement>(null);
+	const remRef = useRef<HTMLDivElement>(null);
 	useLayoutEffect(() => {
 		if (!maxWidthRef.current) return;
 		let lastWidth = 0;
 		let timeoutId: ReturnType<typeof setTimeout>;
 
 		const observer = new ResizeObserver(([entry]) => {
-			if (!maxWidthRef.current || !cellRef.current) {
+			if (!maxWidthRef.current || !cellRef.current || !remRef.current) {
 				return;
 			}
 			const width = Math.round(entry.contentBoxSize[0].inlineSize);
@@ -41,9 +45,21 @@ function TableConfig({ rowState, groupColsState }: TableConfigProps) {
 				}
 			}, 333);
 
-			const style = getComputedStyle(cellRef.current);
-			const minCellWidth = parseFloat(style.minWidth);
-			const possibleNextRows = Math.max(Math.floor(width / minCellWidth), 1);
+			const minCellWidth = parseFloat(
+				getComputedStyle(cellRef.current).minWidth
+			);
+			const REM = parseFloat(getComputedStyle(remRef.current).width);
+			const gapWidth = REM * GAP_REM;
+			const borderWidth = REM * BORDER_REM;
+			const possibleNextRows = Math.max(
+				1,
+				Math.floor(
+					(width + gapWidth - 2 * borderWidth) / (minCellWidth + gapWidth)
+					// When a: minCellWidth, b: gapWidth, c: borderWidth, w: width,
+					// x: possibleNextRows, then:
+					// ax + b(x - 1) + 2c <= w  <->  x <= (w + b - 2c) / (a + b)
+				)
+			);
 			if (possibleNextRows === possibleRows) return;
 			console.log(
 				"possibleNextRows",
@@ -101,6 +117,7 @@ function TableConfig({ rowState, groupColsState }: TableConfigProps) {
 				each
 			</label>
 			<ItemHeader ref={cellRef} isTransparent />
+			<div ref={remRef} style={{ width: "1rem" }} />
 		</div>
 	);
 }

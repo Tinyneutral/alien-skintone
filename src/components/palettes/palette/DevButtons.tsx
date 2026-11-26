@@ -1,7 +1,8 @@
-import { useContext } from "react";
+import { useContext, useRef } from "react";
 import { useAppDispatch } from "@/app/hooks";
 import { addColors } from "@/features/palettes/palette";
 import { PaletteContext } from "./PaletteContext";
+import { extractPalette } from "./extractFromPhoto";
 import "./DevButtons.css";
 
 function DevButtons() {
@@ -13,17 +14,22 @@ function DevButtons() {
 	const handleInit = () => {
 		initPalette(dispatchAddColors);
 	};
+	const importImageInputRef = useRef<HTMLInputElement>(null);
+	const handleImportImage = async (
+		event: React.ChangeEvent<HTMLInputElement>
+	) => {
+		const file = event.target.files?.[0];
+		if (file) {
+			const colors = await extractPalette(file);
+			dispatchAddColors(colors);
+		}
+		event.target.value = "";
+	};
 
 	return (
 		<div className="dev">
+			<p>DEMO ONLY</p>
 			<p>
-				The buttons below are for demo use only. (There will be an "import
-				palette" button as an alternative.)
-			</p>
-			<p>
-				以下のボタンはデモ用で、完成版には含まれません。（完成版ではパレットを読み込む機能を実装する予定です。）
-			</p>
-			<div className="inputs">
 				<label>
 					<button onClick={handleInit}>Init Palette</button> palette made by
 					_izz_ ({" "}
@@ -35,7 +41,23 @@ function DevButtons() {
 					</a>{" "}
 					)
 				</label>
-			</div>
+			</p>
+			<p>
+				<label>
+					<button
+						type="button"
+						onClick={() => importImageInputRef.current?.click()}>
+						Import Palette from Image
+					</button>
+					<input
+						ref={importImageInputRef}
+						type="file"
+						accept="image/*"
+						onChange={handleImportImage}
+						hidden
+					/>
+				</label>
+			</p>
 		</div>
 	);
 }
